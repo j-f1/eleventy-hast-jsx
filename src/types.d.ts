@@ -2,7 +2,7 @@ import { Node, Properties } from "hast";
 
 type Child = Node | string;
 
-export interface h {
+export interface createElement {
   (type: string, properties?: Properties, ...children: Child[]): Node;
   <Props>(type: (props: Props) => Node, props: Props): Node;
   <Props>(
@@ -11,5 +11,5 @@ export interface h {
     ...children: Node[]
   ): Node;
 
-  frag: unique Symbol;
+  Fragment: unique Symbol;
 }

@@ -16,8 +16,8 @@ export const config = (eleventyConfig) => {
   /** @type {ts.CompilerOptions} */
   const tsOptions = {
     jsx: ts.JsxEmit.React,
-    jsxFactory: "h",
-    jsxFragmentFactory: "h.frag",
+    jsxFactory: "createElement",
+    jsxFragmentFactory: "createElement.Fragment",
     module: ts.ModuleKind.CommonJS,
     moduleResolution: ts.ModuleResolutionKind.NodeNext,
   };

@@ -1,8 +1,10 @@
 const h = require("hastscript");
 
-exports.h = /** @type {import('./types').h} */ Object.assign(
+/** @typedef {import('./types').createElement} createElement */
+
+exports.createElement = /** @type {createElement} */ Object.assign(
   (
-    /** @type {string | function | import('./types').h['frag'] | typeof exports.Raw} */ type,
+    /** @type {any} */ type,
     /** @type {any} */ properties,
     /** @type {any} */ ...children
   ) => {
@@ -10,7 +12,7 @@ exports.h = /** @type {import('./types').h} */ Object.assign(
       return h(type, properties, children.flat(1));
     } else if (typeof type === "function") {
       return type({ ...properties, children: children.flat(1) });
-    } else if (type === exports.h.frag) {
+    } else if (type === exports.createElement.Fragment) {
       return children;
     } else if (type === exports.Raw) {
       return { type: "raw", value: properties.html };
@@ -18,7 +20,7 @@ exports.h = /** @type {import('./types').h} */ Object.assign(
       throw new Error(`Invalid component type: ${type}`);
     }
   },
-  { frag: Symbol("<Fragment />") }
+  { Fragment: Symbol("<createElement.Fragment />") }
 );
 
 exports.Raw = Symbol("<Raw />");
