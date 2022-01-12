@@ -1,15 +1,16 @@
-import ts from "typescript";
-import fs from "node:fs/promises";
-import { statSync } from "node:fs";
-import { absolutePath } from "@11ty/eleventy/src/TemplatePath";
-import Module from "node:module";
+const fs = require("node:fs/promises");
+const { statSync } = require("node:fs");
+const Module = require("node:module");
+
+const ts = require("typescript");
+const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
 const AsyncFunction = (async () => {}).constructor;
 
 /** @typedef {{default: unknown, data?: unknown}} Instance */
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig")) => void} */
-const config = (eleventyConfig) => {
+export const config = (eleventyConfig) => {
   eleventyConfig.addTemplateFormats(["tsx", "jsx"]);
 
   /** @type {ts.CompilerOptions} */
