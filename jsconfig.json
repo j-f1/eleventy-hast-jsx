@@ -4,8 +4,10 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "allowJs": true,
-    "checkJs": true,
-    "strict": true
+    "strict": true,
+    "declaration": true,
+    "noEmit": true
   },
-  "include": ["src/*"]
+  "include": ["src/*"],
+  "exclude": ["node_modules/**/*"]
 }

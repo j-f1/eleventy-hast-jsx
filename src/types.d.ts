@@ -1,29 +1,38 @@
-import { Node, Properties } from "hast";
+import * as HAST from "hast";
+import { Raw as RawNode } from "hast-util-to-html";
 
-type Child = Node | string;
+type Child = HAST.Node | string | Array<HAST.Node | string>;
 
-export type Raw = (props: { html: string }) => Node;
-export type DOCTYPE = () => Node;
-export type Comment = (props: { children: string }) => Node;
+export type Raw = (props: { html: string }) => RawNode;
+export type DOCTYPE = () => HAST.DocType;
+export type Comment = (props: { children: string }) => HAST.Comment;
 
 export interface createElement {
-  (type: string, properties?: Properties | null, ...children: Child[]): Node;
-
-  <Props>(type: (props: Props) => Node, props: Props): Node;
-  <Props>(
-    type: (props: Props & { children: Child[] }) => Node,
-    props: Props,
-    ...children: Node[]
-  ): Node;
-
-  (type: (props: {}) => Node, props: null): Node;
   (
-    type: (props: { children: Child[] }) => Node,
-    props: null,
-    ...children: Node[]
-  ): Node;
+    type: string,
+    properties?: HAST.Properties | null,
+    ...children: Child[]
+  ): HAST.Node;
 
-  (type: createElement["Fragment"], props: null, ...children: Child[]): Node;
+  <Props>(type: (props: Props) => HAST.Node, props: Props): HAST.Node;
+  <Props>(
+    type: (props: Props & { children: Child[] }) => HAST.Node,
+    props: Props,
+    ...children: HAST.Node[]
+  ): HAST.Node;
+
+  (type: (props: {}) => HAST.Node, props: null): HAST.Node;
+  (
+    type: (props: { children: Child[] }) => HAST.Node,
+    props: null,
+    ...children: HAST.Node[]
+  ): HAST.Node;
+
+  (
+    type: createElement["Fragment"],
+    props: null,
+    ...children: Child[]
+  ): HAST.Node;
 
   Fragment: symbol;
 }

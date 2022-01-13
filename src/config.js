@@ -1,8 +1,11 @@
+// @ts-check
+
 const fs = require("node:fs/promises");
 const { statSync } = require("node:fs");
 const Module = require("node:module");
 
 const ts = require("typescript");
+/** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
 const AsyncFunction = (async () => {}).constructor;
@@ -30,7 +33,7 @@ module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
   /** @type {(_: string) => Promise<Instance>} */
   const createInstance = async (inputPath) => {
     const fileName = absolutePath(inputPath);
-    const childModule = new Module(fileName, module);
+    const childModule = new Module(fileName, /** @type {any} */ (module));
     childModule.filename = fileName;
 
     const input = await fs.readFile(fileName, "utf-8");

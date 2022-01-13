@@ -4,10 +4,14 @@ const h = require("hastscript");
 
 /** @typedef {import('./types').createElement} createElement */
 
+/**
+ * @param {import("./types").Child[]} children
+ * @returns {import("hast").Node[]}
+ */
 const processChildren = (children) =>
-  children.flatMap((ch) =>
-    typeof ch === "string" ? { type: "text", value: ch } : ch
-  );
+  children
+    .flat(1)
+    .map((ch) => (typeof ch === "string" ? { type: "text", value: ch } : ch));
 
 exports.createElement = /** @type {createElement} */ Object.assign(
   (
@@ -32,7 +36,7 @@ exports.createElement = /** @type {createElement} */ Object.assign(
 exports.Raw = ({ html }) => ({ type: "raw", value: html });
 
 /** @type {import('./types').DOCTYPE} */
-exports.DOCTYPE = () => ({ type: "doctype" });
+exports.DOCTYPE = () => ({ type: "doctype", name: "html" });
 
 /** @type {import('./types').Comment} */
 exports.Comment = ({ children }) => ({ type: "comment", value: children });
