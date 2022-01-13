@@ -2,9 +2,9 @@ import { Node, Properties } from "hast";
 
 type Child = Node | string;
 
-export type Raw = unique symbol;
-export type DOCTYPE = unique symbol;
-export type Comment = unique symbol;
+export type Raw = (props: { html: string }) => Node;
+export type DOCTYPE = () => Node;
+export type Comment = (props: { children: string }) => Node;
 
 export interface createElement {
   (type: string, properties?: Properties | null, ...children: Child[]): Node;
@@ -25,9 +25,5 @@ export interface createElement {
 
   (type: createElement["Fragment"], props: null, ...children: Child[]): Node;
 
-  (type: Raw, props: { html: string }): Node;
-  (type: DOCTYPE, props: null): Node;
-  (type: Comment, props: null, child: string): Node;
-
-  Fragment: unique Symbol;
+  Fragment: symbol;
 }

@@ -1,3 +1,5 @@
+// @ts-check
+
 const h = require("hastscript");
 
 /** @typedef {import('./types').createElement} createElement */
@@ -19,12 +21,6 @@ exports.createElement = /** @type {createElement} */ Object.assign(
       return type({ ...properties, children: processChildren(children) });
     } else if (type === exports.createElement.Fragment) {
       return children;
-    } else if (type === exports.Raw) {
-      return { type: "raw", value: properties.html };
-    } else if (type === exports.DOCTYPE) {
-      return { type: "doctype" };
-    } else if (type === exports.Comment) {
-      return { type: "comment", value: children[0] };
     } else {
       throw new Error(`Invalid component type: ${type}`);
     }
@@ -33,10 +29,10 @@ exports.createElement = /** @type {createElement} */ Object.assign(
 );
 
 /** @type {import('./types').Raw} */
-exports.Raw = Symbol("<Raw />");
+exports.Raw = ({ html }) => ({ type: "raw", value: html });
 
 /** @type {import('./types').DOCTYPE} */
-exports.DOCTYPE = Symbol("<DOCTYPE />");
+exports.DOCTYPE = () => ({ type: "doctype" });
 
 /** @type {import('./types').Comment} */
-exports.Comment = Symbol("<Comment />");
+exports.Comment = ({ children }) => ({ type: "comment", value: children });
