@@ -8,6 +8,8 @@ const ts = require("typescript");
 /** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
+const { createElement } = require("./jsx");
+
 const AsyncFunction = (async () => {}).constructor;
 
 /** @typedef {{default: (data: unknown) => import('hast').RootContent | import('hast').RootContent[], data?: unknown}} Instance */
@@ -43,8 +45,14 @@ exports.plugin = (eleventyConfig, { typescript, toHtml } = {}) => {
       "module",
       "exports",
       "require",
+      "createElement",
       transpiledSource
-    )(childModule, childModule.exports, Module.createRequire(fileName));
+    )(
+      childModule,
+      childModule.exports,
+      Module.createRequire(fileName),
+      createElement
+    );
 
     return childModule.exports;
   };
