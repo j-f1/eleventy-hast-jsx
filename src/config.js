@@ -57,18 +57,18 @@ module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
       const instance = instances.get(inputPath);
       if (!instance) throw new TypeError("Missing instance for " + inputPath);
+
+      const { toHtml: hastToHtml } = await import("hast-util-to-html");
+
       return async (/** @type {unknown} */ data) => {
-        const [hast, { toHtml: hastToHtml }] = await Promise.all([
-          instance.default(data),
-          import("hast-util-to-html"),
-        ]);
+        const hast = await instance.default(data);
 
         return hastToHtml(
           {
             type: "root",
             children: Array.isArray(hast) ? hast : [hast],
           },
-          toHtml
+          { allowDangerousHtml: true, ...toHtml }
         );
       };
     },
