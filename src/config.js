@@ -27,14 +27,8 @@ module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
   /** @type {Map<string, Instance>} */
   const instances = new Map();
 
-  /** @type {Map<string, number>} */
-  const mtimes = new Map();
-
   /** @type {(_: string) => Promise<Instance>} */
-  const getInstance = async (inputPath) => {
-    let inst = instances.get(inputPath);
-    if (inst) return inst;
-
+  const createInstance = async (inputPath) => {
     const fileName = absolutePath(inputPath);
     const childModule = new Module(fileName, module);
     childModule.filename = fileName;
@@ -49,21 +43,20 @@ module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
       transpiledSource
     )(childModule, childModule.exports, Module.createRequire(fileName));
 
-    instances.set(inputPath, childModule.exports);
-
     return childModule.exports;
   };
 
   const extension = {
     read: false,
-    getInstanceFromInputPath: (path) => {
-      console.log("gIFIP", path);
-      return getInstance(path);
+    async getInstanceFromInputPath(/** @type {string} */ inputPath) {
+      const instance = await createInstance(inputPath);
+      instances.set(inputPath, instance);
+      return instance;
     },
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
-      console.log(`Compiling ${inputPath}`);
-      const instance = await getInstance(inputPath);
+      const instance = instances.get(inputPath);
+      if (!instance) throw new TypeError("Missing instance for " + inputPath);
       return async (/** @type {unknown} */ data) => {
         const [hast, { toHtml: hastToHtml }] = await Promise.all([
           instance.default(data),
@@ -88,12 +81,6 @@ module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
         }
         return data.permalink;
       },
-      cache: true,
-      getCacheKey: (/** @type {null} */ _, /** @type {string} */ inputPath) =>
-        JSON.stringify({
-          inputPath,
-          mtime: statSync(inputPath, { throwIfNoEntry: true }).mtime,
-        }),
     },
   };
 
