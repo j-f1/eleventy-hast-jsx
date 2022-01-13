@@ -6,5 +6,6 @@
     "allowJs": true,
     "checkJs": true,
     "strict": true
-  }
+  },
+  "include": ["src/**"]
 }

@@ -52,7 +52,16 @@ export const config = (eleventyConfig) => {
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
       const instance = await getInstance(inputPath);
-      return instance.default;
+      return async (data) => {
+        const [hast, toHtml] = await Promise.all([
+          instance.default(data),
+          import("hast-util-to-html"),
+        ]);
+        return toHtml({
+          type: "root",
+          children: Array.isArray(hast) ? hast : [hast],
+        });
+      };
     },
 
     compileOptions: {

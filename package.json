@@ -21,6 +21,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "hast-util-to-html": "^8.0.3",
     "hastscript": "^6.0.0"
   }
 }
