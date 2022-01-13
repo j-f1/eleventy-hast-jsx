@@ -1,16 +1,16 @@
-import { createElement, DOCTYPE } from "../..";
+import { createElement, DOCTYPE, Raw } from "../..";
 import { inspect } from "util";
 
-export default (data) => (
+export default ({ title = "Untitled", content }) => (
   <>
     <DOCTYPE />
     <html>
       <head>
-        <title>Hello, world!</title>
+        <title>{title}</title>
       </head>
       <body>
-        <h1>Test</h1>
-        <pre>{inspect(data)}</pre>
+        <h1>{title}</h1>
+        <Raw html={content} />
       </body>
     </html>
   </>
