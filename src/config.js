@@ -8,9 +8,10 @@ const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 const AsyncFunction = (async () => {}).constructor;
 
 /** @typedef {{default: unknown, data?: unknown}} Instance */
+/** @typedef {{typescript?: import('typescript').CompilerOptions, toHtml?: import('hast-util-to-html').Options }} Options */
 
-/** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig")) => void} */
-export const config = (eleventyConfig) => {
+/** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
+export const config = (eleventyConfig, { typescript, toHtml } = {}) => {
   eleventyConfig.addTemplateFormats(["tsx", "jsx"]);
 
   /** @type {ts.CompilerOptions} */
@@ -20,6 +21,7 @@ export const config = (eleventyConfig) => {
     jsxFragmentFactory: "createElement.Fragment",
     module: ts.ModuleKind.CommonJS,
     moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    ...typescript,
   };
 
   /** @type {Map<string, Instance>} */
@@ -53,14 +55,17 @@ export const config = (eleventyConfig) => {
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
       const instance = await getInstance(inputPath);
       return async (data) => {
-        const [hast, toHtml] = await Promise.all([
+        const [hast, hastToHtml] = await Promise.all([
           instance.default(data),
           import("hast-util-to-html"),
         ]);
-        return toHtml({
-          type: "root",
-          children: Array.isArray(hast) ? hast : [hast],
-        });
+        return hastToHtml(
+          {
+            type: "root",
+            children: Array.isArray(hast) ? hast : [hast],
+          },
+          toHtml
+        );
       };
     },
 
