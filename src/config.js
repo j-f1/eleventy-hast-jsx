@@ -7,11 +7,11 @@ const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
 const AsyncFunction = (async () => {}).constructor;
 
-/** @typedef {{default: unknown, data?: unknown}} Instance */
+/** @typedef {{default: (data: unknown) => import('hast').RootContent | import('hast').RootContent[], data?: unknown}} Instance */
 /** @typedef {{typescript?: import('typescript').CompilerOptions, toHtml?: import('hast-util-to-html').Options }} Options */
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
-export const config = (eleventyConfig, { typescript, toHtml } = {}) => {
+module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
   eleventyConfig.addTemplateFormats(["tsx", "jsx"]);
 
   /** @type {ts.CompilerOptions} */
@@ -27,38 +27,49 @@ export const config = (eleventyConfig, { typescript, toHtml } = {}) => {
   /** @type {Map<string, Instance>} */
   const instances = new Map();
 
+  /** @type {Map<string, number>} */
+  const mtimes = new Map();
+
   /** @type {(_: string) => Promise<Instance>} */
   const getInstance = async (inputPath) => {
     let inst = instances.get(inputPath);
     if (inst) return inst;
 
     const fileName = absolutePath(inputPath);
-    const input = await fs.readFile(fileName, "utf-8");
     const childModule = new Module(fileName, module);
     childModule.filename = fileName;
+
+    const input = await fs.readFile(fileName, "utf-8");
+    const transpiledSource = ts.transpile(input, tsOptions, fileName);
 
     await AsyncFunction(
       "module",
       "exports",
       "require",
-      ts.transpile(input, tsOptions, fileName)
-    )(childModule, childModule.exports, childModule.require);
+      transpiledSource
+    )(childModule, childModule.exports, Module.createRequire(fileName));
 
     instances.set(inputPath, childModule.exports);
+
     return childModule.exports;
   };
 
   const extension = {
     read: false,
-    getInstanceFromInputPath: getInstance,
+    getInstanceFromInputPath: (path) => {
+      console.log("gIFIP", path);
+      return getInstance(path);
+    },
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
+      console.log(`Compiling ${inputPath}`);
       const instance = await getInstance(inputPath);
-      return async (data) => {
-        const [hast, hastToHtml] = await Promise.all([
+      return async (/** @type {unknown} */ data) => {
+        const [hast, { toHtml: hastToHtml }] = await Promise.all([
           instance.default(data),
           import("hast-util-to-html"),
         ]);
+
         return hastToHtml(
           {
             type: "root",
@@ -77,6 +88,7 @@ export const config = (eleventyConfig, { typescript, toHtml } = {}) => {
         }
         return data.permalink;
       },
+      cache: true,
       getCacheKey: (/** @type {null} */ _, /** @type {string} */ inputPath) =>
         JSON.stringify({
           inputPath,
