@@ -6,7 +6,9 @@
     "allowJs": true,
     "strict": true,
     "declaration": true,
-    "noEmit": true
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "types"
   },
   "include": ["src/*"],
   "exclude": ["node_modules/**/*"]

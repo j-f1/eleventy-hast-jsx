@@ -13,7 +13,8 @@ const processChildren = (children) =>
     .flat(1)
     .map((ch) => (typeof ch === "string" ? { type: "text", value: ch } : ch));
 
-exports.createElement = /** @type {createElement} */ Object.assign(
+/** @type {createElement} */
+exports.createElement = Object.assign(
   (
     /** @type {any} */ type,
     /** @type {any} */ properties,

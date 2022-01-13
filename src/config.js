@@ -14,7 +14,7 @@ const AsyncFunction = (async () => {}).constructor;
 /** @typedef {{typescript?: import('typescript').CompilerOptions, toHtml?: import('hast-util-to-html').Options }} Options */
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
-module.exports = (eleventyConfig, { typescript, toHtml } = {}) => {
+exports.plugin = (eleventyConfig, { typescript, toHtml } = {}) => {
   eleventyConfig.addTemplateFormats(["tsx", "jsx"]);
 
   /** @type {ts.CompilerOptions} */

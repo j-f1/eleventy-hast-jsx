@@ -1,1 +1,4 @@
-module.exports = { plugin: require("./config"), ...require("./jsx") };
+module.exports = {
+  ...require("./config"),
+  ...require("./jsx"),
+};

@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "description": "Eleventy plugin for JSX using hast",
   "main": "src/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc -p jsconfig.json; cp src/*.d.ts types/"
   },
   "keywords": [],
   "author": {
