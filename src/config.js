@@ -1,7 +1,5 @@
 // @ts-check
 
-const { readFileSync } = require("node:fs");
-const fs = require("node:fs/promises");
 const Module = require("node:module");
 
 const { transformFileSync } = require("@babel/core");

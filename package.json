@@ -15,6 +15,9 @@
     "url": "https://jedfox.com"
   },
   "license": "MIT",
+  "peerDependencies": {
+    "@11ty/eleventy": "^1.0.0"
+  },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.0",
     "@types/node": "^17.0.8",
@@ -22,6 +25,8 @@
   },
   "dependencies": {
     "@babel/core": "^7.16.7",
+    "@babel/plugin-syntax-jsx": "^7.16.7",
+    "@babel/plugin-transform-react-jsx": "^7.16.7",
     "@babel/register": "^7.16.9",
     "@types/babel__core": "^7.1.18",
     "@types/hast": "^2.3.4",
