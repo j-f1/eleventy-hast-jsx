@@ -21,6 +21,9 @@
     "prettier": "^2.5.1"
   },
   "dependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/register": "^7.16.9",
+    "@types/babel__core": "^7.1.18",
     "@types/hast": "^2.3.4",
     "hast-util-to-html": "^8.0.3",
     "hastscript": "^6.0.0",
