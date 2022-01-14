@@ -10,15 +10,15 @@ const h = require("hastscript");
  * @returns {import("hast").Node[]}
  */
 const processChildren = (children, name) =>
-  children.flat(20).map((ch) =>
-    typeof ch === "string"
-      ? { type: "text", value: ch }
-      : ch == null
-      ? (() => {
-          throw new TypeError(`Unexpected ${ch} child in ${name}`);
-        })()
-      : ch
-  );
+  children
+    .flat(20)
+    .flatMap((ch) =>
+      typeof ch === "string"
+        ? [{ type: "text", value: ch }]
+        : ch == null || typeof ch === "boolean"
+        ? []
+        : [ch]
+    );
 
 /** @type {createElement} */
 exports.createElement = Object.assign(
