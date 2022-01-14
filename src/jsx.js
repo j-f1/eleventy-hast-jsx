@@ -5,16 +5,17 @@ const h = require("hastscript");
 /** @typedef {import('./types').createElement} createElement */
 
 /**
- * @param {import("./types").Child[]} children
- * @param {string} name
+ * @param {any[]} children
  * @returns {import("hast").Node[]}
  */
-const processChildren = (children, name) =>
+const processChildren = (children) =>
   children
     .flat(20)
     .flatMap((ch) =>
       typeof ch === "string"
         ? [{ type: "text", value: ch }]
+        : typeof ch === "number"
+        ? [{ type: "text", value: ch.toString() }]
         : ch == null || typeof ch === "boolean"
         ? []
         : [ch]
@@ -28,11 +29,11 @@ exports.createElement = Object.assign(
     /** @type {any} */ ...children
   ) => {
     if (typeof type === "string") {
-      return h(type, properties, processChildren(children, type));
+      return h(type, properties, processChildren(children));
     } else if (typeof type === "function") {
       return type({
         ...properties,
-        children: processChildren(children, type.name),
+        children: processChildren(children),
       });
     } else if (type === exports.createElement.Fragment) {
       return processChildren(children, "Fragment");
