@@ -6,12 +6,19 @@ const h = require("hastscript");
 
 /**
  * @param {import("./types").Child[]} children
+ * @param {string} name
  * @returns {import("hast").Node[]}
  */
-const processChildren = (children) =>
-  children
-    .flat(1)
-    .map((ch) => (typeof ch === "string" ? { type: "text", value: ch } : ch));
+const processChildren = (children, name) =>
+  children.flat(1).map((ch) =>
+    typeof ch === "string"
+      ? { type: "text", value: ch }
+      : ch == null
+      ? (() => {
+          throw new TypeError(`Unexpected ${ch} child in ${name}`);
+        })()
+      : ch
+  );
 
 /** @type {createElement} */
 exports.createElement = Object.assign(
@@ -21,9 +28,12 @@ exports.createElement = Object.assign(
     /** @type {any} */ ...children
   ) => {
     if (typeof type === "string") {
-      return h(type, properties, processChildren(children));
+      return h(type, properties, processChildren(children, type));
     } else if (typeof type === "function") {
-      return type({ ...properties, children: processChildren(children) });
+      return type({
+        ...properties,
+        children: processChildren(children, type.name),
+      });
     } else if (type === exports.createElement.Fragment) {
       return children;
     } else {
