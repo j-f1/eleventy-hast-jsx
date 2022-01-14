@@ -26,6 +26,7 @@ exports.plugin = (eleventyConfig, { typescript, toHtml } = {}) => {
     jsxFragmentFactory: "createElement.Fragment",
     module: ts.ModuleKind.CommonJS,
     moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    esModuleInterop: true,
     ...typescript,
   };
 
@@ -117,13 +118,20 @@ exports.plugin = (eleventyConfig, { typescript, toHtml } = {}) => {
       return async (/** @type {unknown} */ data) => {
         const hast = await instance.default(data);
 
-        return hastToHtml(
-          {
-            type: "root",
-            children: Array.isArray(hast) ? hast : [hast],
-          },
-          { allowDangerousHtml: true, ...toHtml }
-        );
+        try {
+          const html = hastToHtml(
+            {
+              type: "root",
+              children: Array.isArray(hast) ? hast : [hast],
+            },
+            { allowDangerousHtml: true, ...toHtml }
+          );
+          return html;
+        } catch (/** @type {any} */ e) {
+          const err = new e.constructor(`[${inputPath}] ${e.message}`);
+          err.stack = `[${inputPath}] ${e.stack}`;
+          throw err;
+        }
       };
     },
 

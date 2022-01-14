@@ -10,7 +10,7 @@ const h = require("hastscript");
  * @returns {import("hast").Node[]}
  */
 const processChildren = (children, name) =>
-  children.flat(1).map((ch) =>
+  children.flat(20).map((ch) =>
     typeof ch === "string"
       ? { type: "text", value: ch }
       : ch == null
@@ -35,7 +35,7 @@ exports.createElement = Object.assign(
         children: processChildren(children, type.name),
       });
     } else if (type === exports.createElement.Fragment) {
-      return children;
+      return processChildren(children, "Fragment");
     } else {
       throw new Error(`Invalid component type: ${type}`);
     }
