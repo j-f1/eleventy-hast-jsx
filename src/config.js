@@ -46,20 +46,25 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
     const childModule = new Module(fileName, /** @type {any} */ module);
     childModule.filename = fileName;
 
-    const transpiledSource = transformFileSync(fileName, babelOpts);
+    try {
+      const transpiledSource = transformFileSync(fileName, babelOpts)?.code;
 
-    await AsyncFunction(
-      "module",
-      "exports",
-      "require",
-      "createElement",
-      transpiledSource
-    )(
-      childModule,
-      childModule.exports,
-      Module.createRequire(fileName),
-      createElement
-    );
+      await AsyncFunction(
+        "module",
+        "exports",
+        "require",
+        "createElement",
+        transpiledSource
+      )(
+        childModule,
+        childModule.exports,
+        Module.createRequire(fileName),
+        createElement
+      );
+    } catch (/** @type {any} */ e) {
+      e.message = `[${inputPath}] ${e.message}`;
+      throw e;
+    }
 
     return childModule.exports;
   }
