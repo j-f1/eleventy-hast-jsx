@@ -1,7 +1,7 @@
 // @ts-check
 
+const { readFileSync } = require("node:fs");
 const fs = require("node:fs/promises");
-const { statSync } = require("node:fs");
 const Module = require("node:module");
 
 const ts = require("typescript");
@@ -32,10 +32,53 @@ exports.plugin = (eleventyConfig, { typescript, toHtml } = {}) => {
   /** @type {Map<string, Instance>} */
   const instances = new Map();
 
+  /**
+   * @param {string} fileName
+   * @param {Module} module
+   * @returns {NodeRequire}
+   */
+  function createRequire(fileName, module) {
+    const require = Module.createRequire(fileName);
+    return Object.assign(
+      (/** @type {string} */ name) =>
+        loadModule(require.resolve(name), module, require),
+      require
+    );
+  }
+
+  /**
+   * @param {string} absPath
+   * @param {Module} parent
+   * @param {NodeRequire} require
+   */
+  function loadModule(absPath, parent, require) {
+    if (!absPath.endsWith(".jsx")) return require(absPath);
+    const childModule = new Module(absPath, parent);
+    childModule.filename = absPath;
+
+    const input = readFileSync(absPath, "utf-8");
+    const transpiledSource = ts.transpile(input, tsOptions, absPath);
+
+    Function(
+      "module",
+      "exports",
+      "require",
+      "createElement",
+      transpiledSource
+    )(
+      childModule,
+      childModule.exports,
+      createRequire(absPath, childModule),
+      createElement
+    );
+
+    return childModule.exports;
+  }
+
   /** @type {(_: string) => Promise<Instance>} */
-  const createInstance = async (inputPath) => {
+  async function createInstance(inputPath) {
     const fileName = absolutePath(inputPath);
-    const childModule = new Module(fileName, /** @type {any} */ (module));
+    const childModule = new Module(fileName, /** @type {any} */ module);
     childModule.filename = fileName;
 
     const input = await fs.readFile(fileName, "utf-8");
@@ -50,12 +93,12 @@ exports.plugin = (eleventyConfig, { typescript, toHtml } = {}) => {
     )(
       childModule,
       childModule.exports,
-      Module.createRequire(fileName),
+      createRequire(fileName, childModule),
       createElement
     );
 
     return childModule.exports;
-  };
+  }
 
   const extension = {
     read: false,
