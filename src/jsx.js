@@ -36,7 +36,7 @@ exports.createElement = Object.assign(
         children: processChildren(children),
       });
     } else if (type === exports.createElement.Fragment) {
-      return processChildren(children, "Fragment");
+      return processChildren(children);
     } else {
       throw new Error(`Invalid component type: ${type}`);
     }
