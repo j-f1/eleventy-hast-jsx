@@ -24,8 +24,10 @@
     "prettier": "^2.5.1"
   },
   "dependencies": {
+    "@babel/core": "^7.16.7",
     "@babel/plugin-syntax-jsx": "^7.16.7",
     "@babel/plugin-transform-react-jsx": "^7.16.7",
+    "@babel/plugin-transform-react-jsx-source": "^7.16.7",
     "@babel/register": "^7.16.9",
     "@types/babel__core": "^7.1.18",
     "@types/hast": "^2.3.4",

@@ -17,6 +17,7 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
     ...babelOptions,
     plugins: [
       "@babel/plugin-syntax-jsx",
+      require("./jsx-source"),
       [
         "@babel/plugin-transform-react-jsx",
         {
