@@ -9,7 +9,7 @@ const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 /** @typedef {{babel?: import('@babel/core').TransformOptions, toHtml?: import('hast-util-to-html').Options }} Options */
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
-exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
+module.exports = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
   eleventyConfig.addTemplateFormats("jsx");
 
   const babelOpts = {

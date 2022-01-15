@@ -1,4 +1,6 @@
 module.exports = {
-  ...require("./config"),
+  get plugin() {
+    return require("./config");
+  },
   ...require("./jsx"),
 };
