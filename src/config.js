@@ -47,7 +47,8 @@ module.exports = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
         },
         function toKeep() {
           require(".");
-        }
+        },
+        module
       )
     );
     return cache.get(absPath);
