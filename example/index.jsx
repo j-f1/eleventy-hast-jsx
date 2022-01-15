@@ -1,8 +1,8 @@
-import { createElement } from "..";
+const { createElement } = require("..");
 
-export const data = {
-  layout: "default.tsx",
+exports.data = {
+  layout: "default.jsx",
   title: "Test Page",
 };
 
-export default () => <p>Hello, world!</p>;
+exports.default = () => <p>Hello, world!</p>;

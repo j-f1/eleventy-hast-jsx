@@ -1,7 +1,6 @@
-import { createElement, DOCTYPE, Raw } from "../..";
-import { inspect } from "util";
+const { createElement, DOCTYPE, Raw } = require("../..");
 
-export default ({ title = "Untitled", content }) => (
+exports.default = ({ title = "Untitled", content }) => (
   <>
     <DOCTYPE />
     <html>

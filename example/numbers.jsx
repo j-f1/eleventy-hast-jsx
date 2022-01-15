@@ -1,10 +1,10 @@
-import { createElement } from "..";
+const { createElement } = require("..");
 
-export const data = {
-  layout: "default.tsx",
+exports.data = {
+  layout: "default.jsx",
 };
 
-export default ({ numbers }) => (
+exports.default = ({ numbers }) => (
   <ul>
     {numbers.map((n) => (
       <>
