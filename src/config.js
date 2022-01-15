@@ -1,15 +1,7 @@
 // @ts-check
 
-const Module = require("node:module");
-
-const { transformFileSync } = require("@babel/core");
-
 /** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
-
-const { createElement } = require("./jsx");
-
-const AsyncFunction = (async () => {}).constructor;
 
 /** @typedef {{default: (data: unknown) => import('hast').RootContent | import('hast').RootContent[], data?: unknown}} Instance */
 /** @typedef {{babel?: import('@babel/core').TransformOptions, toHtml?: import('hast-util-to-html').Options }} Options */
@@ -41,10 +33,10 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
   const extension = {
     read: false,
     getInstanceFromInputPath: (/** @type {string} */ inputPath) =>
-      require(inputPath),
+      require(absolutePath(inputPath)),
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
-      const instance = require(inputPath);
+      const instance = require(absolutePath(inputPath));
 
       const { toHtml: hastToHtml } = await import("hast-util-to-html");
 
