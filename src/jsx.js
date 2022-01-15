@@ -44,11 +44,17 @@ exports.createElement = Object.assign(
   { Fragment: Symbol("<createElement.Fragment />") }
 );
 
-/** @type {import('./types').Raw} */
+/**
+ * @param {{html: string}} props
+ * @returns {import('hast-util-to-html/lib/types').Raw}
+ */
 exports.Raw = ({ html }) => ({ type: "raw", value: html });
 
-/** @type {import('./types').DOCTYPE} */
+/** @returns {import('hast').DocType} */
 exports.DOCTYPE = () => ({ type: "doctype", name: "html" });
 
-/** @type {import('./types').Comment} */
+/**
+ * @param {{children: string}} props
+ * @returns {import('hast').Comment}
+ */
 exports.Comment = ({ children }) => ({ type: "comment", value: children });
