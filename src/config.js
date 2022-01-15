@@ -38,48 +38,13 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
 
   require("@babel/register")(babelOpts);
 
-  /** @type {Map<string, Instance>} */
-  const instances = new Map();
-  /** @type {(_: string) => Promise<Instance>} */
-  async function createInstance(inputPath) {
-    const fileName = absolutePath(inputPath);
-    const childModule = new Module(fileName, /** @type {any} */ module);
-    childModule.filename = fileName;
-
-    try {
-      const transpiledSource = transformFileSync(fileName, babelOpts)?.code;
-
-      await AsyncFunction(
-        "module",
-        "exports",
-        "require",
-        "createElement",
-        transpiledSource
-      )(
-        childModule,
-        childModule.exports,
-        Module.createRequire(fileName),
-        createElement
-      );
-    } catch (/** @type {any} */ e) {
-      e.message = `[${inputPath}] ${e.message}`;
-      throw e;
-    }
-
-    return childModule.exports;
-  }
-
   const extension = {
     read: false,
-    async getInstanceFromInputPath(/** @type {string} */ inputPath) {
-      const instance = await createInstance(inputPath);
-      instances.set(inputPath, instance);
-      return instance;
-    },
+    getInstanceFromInputPath: (/** @type {string} */ inputPath) =>
+      require(inputPath),
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
-      const instance = instances.get(inputPath);
-      if (!instance) throw new TypeError("Missing instance for " + inputPath);
+      const instance = require(inputPath);
 
       const { toHtml: hastToHtml } = await import("hast-util-to-html");
 
