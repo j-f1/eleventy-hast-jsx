@@ -2,8 +2,6 @@
 
 const h = require("hastscript");
 
-/** @typedef {import('./types').createElement} createElement */
-
 /**
  * @param {any[]} children
  * @returns {import("hast").Node[]}
@@ -21,7 +19,7 @@ const processChildren = (children) =>
         : [ch]
     );
 
-/** @type {createElement} */
+/** @type {import('./types').createElement} */
 exports.createElement = Object.assign(
   (
     /** @type {any} */ type,

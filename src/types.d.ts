@@ -31,3 +31,8 @@ export interface createElement {
 
   Fragment: symbol;
 }
+
+export interface PluginOptions {
+  babelOptions?: import("@babel/core").TransformOptions;
+  htmlOptions?: import("hast-util-to-html").Options;
+}

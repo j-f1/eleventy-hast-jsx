@@ -5,10 +5,7 @@ const stealthyRequire = require("stealthy-require");
 /** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
-/** @typedef {{default: (data: unknown) => import('hast').RootContent | import('hast').RootContent[], data?: unknown}} Instance */
-/** @typedef {{babelOptions?: import('@babel/core').TransformOptions, htmlOptions?: import('hast-util-to-html').Options }} Options */
-
-/** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
+/** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: import("./types").PluginOptions) => void} */
 module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
   eleventyConfig.addTemplateFormats("jsx");
 
