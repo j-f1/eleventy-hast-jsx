@@ -54,7 +54,10 @@ exports.Raw = ({ html }) => ({ type: "raw", value: html });
 exports.DOCTYPE = () => ({ type: "doctype", name: "html" });
 
 /**
- * @param {{children: string}} props
+ * @param {{children: string[]}} props
  * @returns {import('hast').Comment}
  */
-exports.Comment = ({ children }) => ({ type: "comment", value: children });
+exports.Comment = ({ children }) => ({
+  type: "comment",
+  value: children.join(""),
+});
