@@ -6,10 +6,10 @@ const stealthyRequire = require("stealthy-require");
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
 /** @typedef {{default: (data: unknown) => import('hast').RootContent | import('hast').RootContent[], data?: unknown}} Instance */
-/** @typedef {{babel?: import('@babel/core').TransformOptions, toHtml?: import('hast-util-to-html').Options }} Options */
+/** @typedef {{babelOptions?: import('@babel/core').TransformOptions, htmlOptions?: import('hast-util-to-html').Options }} Options */
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
-module.exports = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
+module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
   eleventyConfig.addTemplateFormats("jsx");
 
   const babelOpts = {
@@ -68,18 +68,18 @@ module.exports = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
           `Module for path ${inputPath} was not loaded before compiling`
         );
 
-      const { toHtml: hastToHtml } = await import("hast-util-to-html");
+      const { toHtml } = await import("hast-util-to-html");
 
       return async (/** @type {unknown} */ data) => {
         const hast = await instance.default(data);
 
         try {
-          const html = hastToHtml(
+          const html = toHtml(
             {
               type: "root",
               children: Array.isArray(hast) ? hast : [hast],
             },
-            { allowDangerousHtml: true, ...toHtml }
+            { allowDangerousHtml: true, ...htmlOptions }
           );
           return html;
         } catch (/** @type {any} */ e) {
