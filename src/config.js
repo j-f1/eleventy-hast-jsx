@@ -35,22 +35,32 @@ module.exports = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
   require("@babel/register")(babelOpts);
 
   const cache = new Map();
+  const getInstance = (/** @type {string} */ inputPath) => {
+    const absPath = absolutePath(inputPath);
+    if (cache.has(absPath)) return cache.get(absPath);
+    cache.set(
+      absPath,
+      stealthyRequire(
+        require.cache,
+        function loadTemplate() {
+          return require(absPath);
+        },
+        function toKeep() {
+          require(".");
+        }
+      )
+    );
+    return cache.get(absPath);
+  };
+
+  eleventyConfig.on("eleventy.beforeWatch", () => cache.clear());
 
   eleventyConfig.addExtension("jsx", {
     read: false,
-    getInstanceFromInputPath: (/** @type {string} */ inputPath) => {
-      const absPath = absolutePath(inputPath);
-      cache.set(
-        absPath,
-        stealthyRequire(require.cache, function () {
-          return require(absPath);
-        })
-      );
-      return cache.get(absPath);
-    },
+    getInstanceFromInputPath: getInstance,
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
-      const instance = cache.get(absolutePath(inputPath));
+      const instance = getInstance(inputPath);
 
       if (!instance)
         throw new ReferenceError(
