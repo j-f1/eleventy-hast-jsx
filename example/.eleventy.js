@@ -3,4 +3,5 @@
  */
 module.exports = (eleventyConfig) => {
   eleventyConfig.addPlugin(require("../").plugin);
+  eleventyConfig.ignores.add("components");
 };

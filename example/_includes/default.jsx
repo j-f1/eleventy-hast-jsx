@@ -1,4 +1,5 @@
 const { createElement, DOCTYPE, Raw } = require("../..");
+const Heading = require("../components/Heading");
 
 exports.default = ({ title = "Untitled", content }) => (
   <>
@@ -8,7 +9,7 @@ exports.default = ({ title = "Untitled", content }) => (
         <title>{title}</title>
       </head>
       <body>
-        <h1>{title}</h1>
+        <Heading title={title} />
         <Raw html={content} />
       </body>
     </html>

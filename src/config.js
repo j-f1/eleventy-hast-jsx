@@ -1,5 +1,7 @@
 // @ts-check
 
+const stealthyRequire = require("stealthy-require");
+
 /** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
@@ -32,13 +34,28 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
 
   require("@babel/register")(babelOpts);
 
+  const cache = new Map();
+
   eleventyConfig.addExtension("jsx", {
     read: false,
-    getInstanceFromInputPath: (/** @type {string} */ inputPath) =>
-      require(absolutePath(inputPath)),
+    getInstanceFromInputPath: (/** @type {string} */ inputPath) => {
+      const absPath = absolutePath(inputPath);
+      cache.set(
+        absPath,
+        stealthyRequire(require.cache, function () {
+          return require(absPath);
+        })
+      );
+      return cache.get(absPath);
+    },
     getData: true,
     async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
-      const instance = require(absolutePath(inputPath));
+      const instance = cache.get(absolutePath(inputPath));
+
+      if (!instance)
+        throw new ReferenceError(
+          `Module for path ${inputPath} was not loaded before compiling`
+        );
 
       const { toHtml: hastToHtml } = await import("hast-util-to-html");
 
