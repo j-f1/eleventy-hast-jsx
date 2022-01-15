@@ -15,7 +15,6 @@ module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
   const babelOpts = {
     babelrc: false,
     extensions: [".jsx"],
-    cache: false,
     ...babelOptions,
     plugins: [
       "@babel/plugin-syntax-jsx",
@@ -60,7 +59,7 @@ module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
     read: false,
     getInstanceFromInputPath: getInstance,
     getData: true,
-    async compile(/** @type {null} */ _, /** @type{string} */ inputPath) {
+    async compile(/** @type {null} */ _, /** @type {string} */ inputPath) {
       const instance = getInstance(inputPath);
 
       if (!instance)
