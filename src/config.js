@@ -8,10 +8,11 @@ const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: Options) => void} */
 exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
-  eleventyConfig.addTemplateFormats(["tsx", "jsx"]);
+  eleventyConfig.addTemplateFormats("jsx");
 
   const babelOpts = {
     babelrc: false,
+    extensions: ["jsx"],
     cache: false,
     ...babelOptions,
     plugins: [
@@ -31,7 +32,7 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
 
   require("@babel/register")(babelOpts);
 
-  const extension = {
+  eleventyConfig.addExtension("jsx", {
     read: false,
     getInstanceFromInputPath: (/** @type {string} */ inputPath) =>
       require(absolutePath(inputPath)),
@@ -70,8 +71,5 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
         return data.permalink;
       },
     },
-  };
-
-  eleventyConfig.addExtension("jsx", extension);
-  eleventyConfig.addExtension("tsx", extension);
+  });
 };
