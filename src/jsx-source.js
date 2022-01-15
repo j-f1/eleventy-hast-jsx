@@ -8,19 +8,16 @@ const t = require("@babel/core").types;
  * @param {any} object
  * @returns {import("@babel/types").Expression}
  */
-function toExpression(object, k = "??") {
+function toExpression(object) {
   switch (typeof object) {
     case "number":
       return t.numericLiteral(object);
     case "object":
       return t.objectExpression(
         Object.entries(object).map(([k, v]) =>
-          t.objectProperty(t.identifier(k), toExpression(v, k))
+          t.objectProperty(t.identifier(k), toExpression(v))
         )
       );
-    case "undefined":
-      console.log(k);
-      return t.identifier("undefined");
     default:
       throw new Error("unexpected value " + JSON.stringify(object));
   }
@@ -42,7 +39,7 @@ module.exports = {
       for (const attribute of attributes) {
         if (
           attribute.type === "JSXAttribute" &&
-          attribute.name?.name === id.name
+          attribute.name?.name === "__position"
         ) {
           // The __position attribute already exists
           return;

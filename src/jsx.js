@@ -1,7 +1,6 @@
 // @ts-check
 
 const h = require("hastscript");
-const stringifyPosition = require("unist-util-stringify-position");
 
 /** @typedef {import('./types').createElement} createElement */
 
@@ -26,32 +25,20 @@ const processChildren = (children) =>
 exports.createElement = Object.assign(
   (
     /** @type {any} */ type,
-    /** @type {any} */ props,
+    /** @type {any} */ properties,
     /** @type {any} */ ...children
   ) => {
-    const { __position, ...properties } = props ?? {};
-    try {
-      const p = (/** @type {import("hast").Element} */ node) =>
-        Array.isArray(node)
-          ? node
-          : Object.assign(node, { position: __position });
-      if (typeof type === "string") {
-        return p(h(type, properties, processChildren(children)));
-      } else if (typeof type === "function") {
-        return p(
-          type({
-            ...properties,
-            children: processChildren(children),
-          })
-        );
-      } else if (type === exports.createElement.Fragment) {
-        return processChildren(children);
-      } else {
-        throw new Error(`Invalid component type: ${type}`);
-      }
-    } catch (e) {
-      e.message = `[${stringifyPosition(__position)}] ${e.message}`;
-      throw e;
+    if (typeof type === "string") {
+      return h(type, properties, processChildren(children));
+    } else if (typeof type === "function") {
+      return type({
+        ...properties,
+        children: processChildren(children),
+      });
+    } else if (type === exports.createElement.Fragment) {
+      return processChildren(children);
+    } else {
+      throw new Error(`Invalid component type: ${type}`);
     }
   },
   { Fragment: Symbol("<createElement.Fragment />") }
