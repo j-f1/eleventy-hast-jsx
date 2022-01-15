@@ -92,12 +92,7 @@ module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
 
     compileOptions: {
       spiderJavaScriptDependencies: true,
-      permalink: () => (/** @type {any} */ data) => {
-        if (typeof data.permalink === "function") {
-          return data.permalink(data);
-        }
-        return data.permalink;
-      },
+      permalink: "raw",
     },
   });
 };
