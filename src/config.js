@@ -12,6 +12,7 @@ exports.plugin = (eleventyConfig, { babel: babelOptions, toHtml } = {}) => {
 
   const babelOpts = {
     babelrc: false,
+    cache: false,
     ...babelOptions,
     plugins: [
       "@babel/plugin-syntax-jsx",
