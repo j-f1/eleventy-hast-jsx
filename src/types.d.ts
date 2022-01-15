@@ -1,5 +1,5 @@
 import * as HAST from "hast";
-import { Raw as RawNode } from "hast-util-to-html";
+import { Raw as RawNode } from "hast-util-to-html/lib/types";
 
 type Child = HAST.Node | string | Array<HAST.Node | string>;
 
