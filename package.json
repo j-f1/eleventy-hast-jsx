@@ -8,6 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsc -p jsconfig.json; cp src/*.d.ts types/"
   },
+  "exports": {
+    ".": "./src/index.js"
+  },
   "files": [
     "src/*",
     "types/*"
