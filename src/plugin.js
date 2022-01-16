@@ -1,63 +1,19 @@
 // @ts-check
 
-const stealthyRequire = require("stealthy-require");
-
-/** @type {any} */
-const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
-
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: import("./types").PluginOptions) => void} */
 module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
   eleventyConfig.addTemplateFormats("jsx");
 
-  const babelOpts = {
-    babelrc: false,
-    extensions: [".jsx"],
-    ...babelOptions,
-    plugins: [
-      "@babel/plugin-syntax-jsx",
-      [
-        "@babel/plugin-transform-react-jsx",
-        {
-          runtime: "classic",
-          pragma: "createElement",
-          pragmaFrag: "createElement.Fragment",
-          useSpread: true,
-        },
-      ],
-      ...(babelOptions?.plugins ?? []),
-    ],
-  };
+  const loader = require("./loader")(babelOptions);
 
-  require("@babel/register")(babelOpts);
-
-  const cache = new Map();
-  const getInstance = (/** @type {string} */ inputPath) => {
-    const absPath = absolutePath(inputPath);
-    if (cache.has(absPath)) return cache.get(absPath);
-    cache.set(
-      absPath,
-      stealthyRequire(
-        require.cache,
-        function loadTemplate() {
-          return require(absPath);
-        },
-        function toKeep() {
-          require(".");
-        },
-        module
-      )
-    );
-    return cache.get(absPath);
-  };
-
-  eleventyConfig.on("eleventy.beforeWatch", () => cache.clear());
+  eleventyConfig.on("eleventy.beforeWatch", () => loader.clearCache());
 
   eleventyConfig.addExtension("jsx", {
     read: false,
-    getInstanceFromInputPath: getInstance,
+    getInstanceFromInputPath: loader.getInstance,
     getData: true,
     async compile(/** @type {null} */ _, /** @type {string} */ inputPath) {
-      const instance = getInstance(inputPath);
+      const instance = loader.getInstance(inputPath);
 
       if (!instance)
         throw new ReferenceError(
