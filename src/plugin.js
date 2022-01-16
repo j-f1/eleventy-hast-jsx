@@ -25,20 +25,14 @@ module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
       return async (/** @type {unknown} */ data) => {
         const hast = await instance.default(data);
 
-        try {
-          const html = toHtml(
-            {
-              type: "root",
-              children: Array.isArray(hast) ? hast : [hast],
-            },
-            { allowDangerousHtml: true, ...htmlOptions }
-          );
-          return html;
-        } catch (/** @type {any} */ e) {
-          const err = new e.constructor(`[${inputPath}] ${e.message}`);
-          err.stack = `[${inputPath}] ${e.stack}`;
-          throw err;
-        }
+        const html = toHtml(
+          {
+            type: "root",
+            children: Array.isArray(hast) ? hast : [hast],
+          },
+          { allowDangerousHtml: true, ...htmlOptions }
+        );
+        return html;
       };
     },
 
