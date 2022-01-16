@@ -8,19 +8,21 @@ module.exports = (options) => {
     babelrc: false,
     extensions: [".jsx"],
     ...options,
-    plugins: [
-      "@babel/plugin-syntax-jsx",
-      [
-        "@babel/plugin-transform-react-jsx",
-        {
-          runtime: "classic",
-          pragma: "createElement",
-          pragmaFrag: "createElement.Fragment",
-          useSpread: true,
-        },
-      ],
-      ...(options?.plugins ?? []),
-    ],
+    plugins: options?.overridePlugins
+      ? options?.plugins
+      : [
+          "@babel/plugin-syntax-jsx",
+          [
+            "@babel/plugin-transform-react-jsx",
+            {
+              runtime: "classic",
+              pragma: "createElement",
+              pragmaFrag: "createElement.Fragment",
+              useSpread: true,
+            },
+          ],
+          ...(options?.plugins ?? []),
+        ],
   });
 
   const cache = new Map();

@@ -40,6 +40,7 @@ exports.default = (data) => <h1>Hello, world!</h1>;
 An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/docs/plugins/#adding-a-plugin) for more information on adding a plugin. The plugin takes two optional options:
 
 - `babelOptions`: Babel is used to transform your `.jsx` files when they are `require()`d. By default, only the JSX transform is enabled. Pass any additional Babel options you want!
+  - By default, any `plugins` you pass will be run after the hardcoded JSX transform that this package does. Passing `overridePlugins: true` in `babelOptions` will replace the default plugin list with your custom plugins.
 - `htmlOptions`: Options passed to [`hast-util-to-html`](https://github.com/syntax-tree/hast-util-to-html#api) to convert your JSX code into an HTML string. By default, this is just `allowDangerousHtml: true` (to allow the `Raw` tag described below to work).
 
 ### `createElement`

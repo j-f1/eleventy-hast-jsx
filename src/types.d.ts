@@ -33,6 +33,8 @@ export interface createElement {
 }
 
 export interface PluginOptions {
-  babelOptions?: import("@babel/core").TransformOptions;
+  babelOptions?: import("@babel/core").TransformOptions & {
+    overridePlugins?: true;
+  };
   htmlOptions?: import("hast-util-to-html").Options;
 }
