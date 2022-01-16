@@ -162,15 +162,13 @@ exports.default = async ({ title, someMarkdown }) => {
 
 `exports.data` is optional, and provides data for the current page (just like [front matter](https://www.11ty.dev/docs/data-frontmatter/) does). Front matter is supported in `.jsx` files too, but `exports.data` is offered as an alternative because most editors will not understand a front matter block in a JavaScript file. It behaves just like a JS front matter block in any other template language.
 
-`eleventy-hast-jsx` does not offer the feature where permalinks are run through the current template engine, since that doesn’t make much sense for JS-based code. Instead, define an [`eleventyComputed` property](https://www.11ty.dev/docs/data-computed/#using-javascript) on the `exports.data` object and write the custom `permalink` function there if you need a dynamic permalink.
+`eleventy-hast-jsx` does not offer the feature where permalinks are run through the current template engine, since that doesn’t make much sense for JS-based code. Instead, pass a function as the value for `permalink` if you need a custom permalink. The function will be called with the merged data cascade (like [in the built-in JS template language](https://www.11ty.dev/docs/languages/javascript/#permalinks), but without support for filters/shortcodes at this point).
 
 ```jsx
 exports.data = {
   layout: "page.jsx",
 };
 ```
-
-I recommend calling `eleventyConfig.setDynamicPermalinks(false)` in your `eleventy.js` file if you’re only using the JSX template language to prevent any surprises.
 
 ## Code reuse in templates
 

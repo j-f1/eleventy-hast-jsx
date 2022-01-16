@@ -31,7 +31,19 @@ module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
 
     compileOptions: {
       spiderJavaScriptDependencies: true,
-      permalink: "raw",
+      permalink(/** @type {null} */ _, /** @type {string} */ inputPath) {
+        const instance = loader.getInstance(inputPath);
+
+        if (!instance)
+          throw new ReferenceError(
+            `Module for path '${inputPath}' was not loaded before requesting permalink`
+          );
+
+        const { data: { permalink } = { permalink: undefined } } = instance;
+
+        return (/** @type {any} */ data) =>
+          typeof permalink === "function" ? permalink(data) : permalink;
+      },
     },
   });
 };
