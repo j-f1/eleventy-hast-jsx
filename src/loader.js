@@ -1,8 +1,11 @@
+// @ts-check
+
 const stealthyRequire = require("stealthy-require");
 
 /** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
 
+/** @param {import('./types').PluginOptions['babelOptions']} options */
 module.exports = (options) => {
   require("@babel/register")({
     babelrc: false,
