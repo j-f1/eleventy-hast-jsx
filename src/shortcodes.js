@@ -22,6 +22,7 @@ const makeProps = (/** @type {any[]} */ args) => {
 };
 
 module.exports = (
+  /** @type {ReturnType<import('./loader')>} */ loader,
   /** @type {import('./types').PluginOptions} */ {
     componentsDir = "_components",
     htmlOptions,
@@ -40,7 +41,7 @@ module.exports = (
       name
     );
 
-    let component = require(templatePath);
+    let component = loader.getInstance(templatePath);
     if (component.default) component = component.default;
 
     return render(await component(props), htmlOptions);
@@ -58,7 +59,7 @@ module.exports = (
       name
     );
 
-    let { default: component } = await import(templatePath);
+    let component = loader.getInstance(templatePath);
     if (component.default) component = component.default;
 
     return render(await component(makeProps(args)), htmlOptions);
@@ -75,7 +76,7 @@ module.exports = (
       name
     );
 
-    let { default: component } = require(templatePath);
+    let component = loader.getInstance(templatePath);
     if (component.default) component = component.default;
 
     return unsafeSyncRender(component(makeProps(args)), htmlOptions);
