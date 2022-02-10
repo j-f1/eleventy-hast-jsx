@@ -131,7 +131,7 @@ If you want to integrate your components into one of the built-in template langu
 #### Nunjucks (preferred)
 
 ```nunjucks
-{% component "Foo" name="name" age=42 %}
+{% component "Foo", name="name", age=42 %}
 ```
 
 Of all the languages, the Nunjucks syntax lets us best represent the component. The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
@@ -141,7 +141,7 @@ The named parameters passed to the shortcode will be turned into props. You can 
 #### Liquid
 
 ```liquid
-{% component "Foo" "name" 42 %}
+{% component "Foo", "name", 42 %}
 ```
 
 The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
