@@ -1,12 +1,23 @@
 // @ts-check
 
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: import("./types").PluginOptions) => void} */
-module.exports = (eleventyConfig, { babelOptions, htmlOptions } = {}) => {
+module.exports = (
+  eleventyConfig,
+  { babelOptions, htmlOptions, componentsDir } = {}
+) => {
   eleventyConfig.addTemplateFormats("jsx");
 
   const loader = require("./loader")(babelOptions);
-
   eleventyConfig.on("eleventy.beforeWatch", () => loader.clearCache());
+
+  const shortcodes = require("./shortcodes")(componentsDir);
+  eleventyConfig.addNunjucksAsyncShortcode(
+    "component",
+    shortcodes.nunjucksAndJS
+  );
+  eleventyConfig.addJavaScriptFunction("component", shortcodes.nunjucksAndJS);
+  eleventyConfig.addLiquidShortcode("component", shortcodes.liquid);
+  eleventyConfig.addHandlebarsHelper("component", shortcodes.handlebars);
 
   /** @type {import('./render.mjs').createRenderer} */
   let createRenderer;

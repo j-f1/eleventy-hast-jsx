@@ -12,3 +12,12 @@ export const createRenderer =
       { allowDangerousHtml: true, ...htmlOptions }
     );
   };
+
+export const render = (hast) =>
+  toHtml(
+    {
+      type: "root",
+      children: Array.isArray(hast) ? hast : [hast],
+    },
+    { allowDangerousHtml: true, ...htmlOptions }
+  );

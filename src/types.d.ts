@@ -37,4 +37,11 @@ export interface PluginOptions {
     overridePlugins?: true;
   };
   htmlOptions?: import("hast-util-to-html").Options;
+  componentsDir?: string;
+}
+
+// full spec at https://www.11ty.dev/docs/data-eleventy-supplied/
+export interface ShortcodeThis {
+  page: { inputPath: string };
+  eleventy: { env: { root: string } };
 }
