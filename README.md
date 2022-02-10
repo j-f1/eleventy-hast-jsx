@@ -37,11 +37,12 @@ exports.default = (data) => <h1>Hello, world!</h1>;
 
 ### `plugin`
 
-An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/docs/plugins/#adding-a-plugin) for more information on adding a plugin. The plugin takes two optional options:
+An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/docs/plugins/#adding-a-plugin) for more information on adding a plugin. The plugin takes three optional options:
 
 - `babelOptions`: Babel is used to transform your `.jsx` files when they are `require()`d. By default, only the JSX transform is enabled. Pass any additional Babel options you want!
   - By default, any `plugins` you pass will be run after the hardcoded JSX transform that this package does. Passing `overridePlugins: true` in `babelOptions` will replace the default plugin list with your custom plugins.
 - `htmlOptions`: Options passed to [`hast-util-to-html`](https://github.com/syntax-tree/hast-util-to-html#api) to convert your JSX code into an HTML string. By default, this is just `allowDangerousHtml: true` (to allow the `Raw` tag described below to work).
+- `componentsDir`: The directory the `component` shortcode (see docs below) should look for components in. Defaults to `_components`.
 
 ### `createElement`
 
@@ -122,6 +123,64 @@ const { createElement, Comment } = require("eleventy-hast-jsx");
 
 <Comment>This is a comment</Comment>;
 ```
+
+### `component` Shortcode
+
+If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component manually.) The shortcode produces a plain HTML string.
+
+#### Nunjucks (preferred)
+
+```nunjucks
+{% component "Foo" name="name" age=42 %}
+```
+
+Of all the languages, the Nunjucks syntax lets us best represent the component. The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+
+The named parameters passed to the shortcode will be turned into props. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string.
+
+#### Liquid
+
+```liquid
+{% component "Foo" "name" 42 %}
+```
+
+The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+
+Liquid doesn’t support named parameters like Nunjucks, so the component will instead receive two props:
+
+- `arg` will be the first parameter you pass (`"name"` in the example above)
+- `args` will be an array containing all passed parameters (`["name", 42]` in the example above)
+- In addition, if you pass only one value, and that value is an object, all of its keys will be available as props. (for example, doing `{% component "Example" page %}` will have the various keys of `page` (`date`, `fileSlug`, …) available as props inside of `Example`.)
+
+You can make your component an `async` function, as its result will be awaited before being converted to an HTML string.
+
+### Handlebars
+
+```hbs
+{{{component "Foo" "name" 42}}}
+```
+
+Make sure you use the triple-stache (`{{{` `}}}`) syntax so the HTML produced by the shortcode doesn’t get escaped.
+
+The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+
+Handlebars doesn’t support named parameters like Nunjucks does, so the component will instead receive two props:
+
+- `arg` will be the first parameter you pass (`"name"` in the example above)
+- `args` will be an array containing all passed parameters (`["name", 42]` in the example above)
+- In addition, if you pass only one value, and that value is an object, all of its keys will be available as props. (for example, doing `{% component "Example" page %}` will have the various keys of `page` (`date`, `fileSlug`, …) available as props inside of `Example`.)
+
+You **must not** make your component an `async` function, since Handlebars doesn’t support async shortcodes.
+
+### 11ty.js (JavaScript)
+
+```js
+await this.component("Foo", { name: "name", age: 42 });
+```
+
+The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+
+Pass a props object as the second parameter. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string. The shortcode will always be async, regardless of whether or not the component is.
 
 ## Template files
 
