@@ -6,8 +6,24 @@ const path = require("node:path");
 let unsafeSyncRender;
 import("./render.mjs").then(({ render }) => (unsafeSyncRender = render));
 
+const makeProps = (/** @type {any[]} */ args) => {
+  if (args.length === 1 && typeof args[0] === "object") {
+    return {
+      ...args[0],
+      arg: args[0],
+      args,
+    };
+  }
+
+  return {
+    arg: args[0],
+    args,
+  };
+};
+
 module.exports = (componentsDir = "_components") => ({
   /**
+   * @this {import('./types').ShortcodeThis}
    * @param {string} name
    * @param {any} props
    */
@@ -15,12 +31,13 @@ module.exports = (componentsDir = "_components") => ({
     const { render } = await import("./render.mjs");
     const templatePath = path.join(this.eleventy.env.root, componentsDir, name);
 
-    let { default: component } = await import(templatePath);
+    let component = require(templatePath);
     if (component.default) component = component.default;
 
     return render(await component(props));
   },
   /**
+   * @this {import('./types').ShortcodeThis}
    * @param {string} name
    * @param {any[]} args
    */
@@ -31,9 +48,10 @@ module.exports = (componentsDir = "_components") => ({
     let { default: component } = await import(templatePath);
     if (component.default) component = component.default;
 
-    return render(await component({ arg: args[0], args }));
+    return render(await component(makeProps(args)));
   },
   /**
+   * @this {import('./types').ShortcodeThis}
    * @param {string} name
    * @param {any[]} args
    */
@@ -43,6 +61,6 @@ module.exports = (componentsDir = "_components") => ({
     let { default: component } = require(templatePath);
     if (component.default) component = component.default;
 
-    return unsafeSyncRender(component({ arg: args[0], args }));
+    return unsafeSyncRender(component(makeProps(args)));
   },
 });
