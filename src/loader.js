@@ -1,6 +1,6 @@
 // @ts-check
 
-const stealthyRequire = require("stealthy-require");
+const stealthyRequire = require("./cached-require");
 
 /** @type {any} */
 const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
@@ -42,9 +42,11 @@ module.exports = (options) => {
             return require(absPath);
           },
           function toKeep() {
-            require(".");
+            for (const path of cache.keys()) {
+              require(path);
+            }
           },
-          module
+          /** @type {NodeJS.Module} */ (module)
         )
       );
       return cache.get(absPath);
