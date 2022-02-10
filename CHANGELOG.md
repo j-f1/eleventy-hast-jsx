@@ -1,3 +1,9 @@
+# v0.2.1
+
+Features:
+
+- Components can now be invoked from any template language (using the `component` shortcode)!
+
 # v0.2.0
 
 Potentially breaking changes:
