@@ -1,3 +1,9 @@
+# v0.2.2
+
+Bug fixes:
+
+- `{% component %}` now uses the same process for loading components that is used to load templates, ensuring that component files aren’t incorrectly cached.
+
 # v0.2.1
 
 Features:
