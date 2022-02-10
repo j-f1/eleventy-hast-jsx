@@ -1,7 +1,13 @@
+// @ts-check
+
 import { toHtml } from "hast-util-to-html";
 
 export const createRenderer =
-  (instance, htmlOptions) => async (/** @type {unknown} */ data) => {
+  (
+    /** @type {any} */ instance,
+    /** @type {import('./types').PluginOptions['htmlOptions']} */ htmlOptions
+  ) =>
+  async (/** @type {unknown} */ data) => {
     const hast = await instance.default(data);
 
     return toHtml(
@@ -13,7 +19,10 @@ export const createRenderer =
     );
   };
 
-export const render = (hast) =>
+export const render = (
+  /** @type {any} */ hast,
+  /** @type {import('./types').PluginOptions['htmlOptions']} */ htmlOptions
+) =>
   toHtml(
     {
       type: "root",

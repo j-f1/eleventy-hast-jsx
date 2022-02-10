@@ -10,7 +10,7 @@ module.exports = (
   const loader = require("./loader")(babelOptions);
   eleventyConfig.on("eleventy.beforeWatch", () => loader.clearCache());
 
-  const shortcodes = require("./shortcodes")(componentsDir);
+  const shortcodes = require("./shortcodes")({ componentsDir, htmlOptions });
   eleventyConfig.addNunjucksAsyncShortcode(
     "component",
     shortcodes.nunjucksAndJS
