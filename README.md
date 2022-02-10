@@ -172,6 +172,8 @@ Handlebars doesn’t support named parameters like Nunjucks does, so the compone
 
 You **must not** make your component an `async` function, since Handlebars doesn’t support async shortcodes.
 
+The Handlebars shortcode is less safe than the others, and has the least functionality. I recommend using Nunjucks instead if possible.
+
 ### 11ty.js (JavaScript)
 
 ```js
