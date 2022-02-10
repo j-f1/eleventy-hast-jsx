@@ -47,12 +47,7 @@ module.exports = function (
   }
 
   var freshModule = callback();
-  var stealthCache = clearCache(requireCache);
-
-  // In case modules to keep were required inside the stealthy require for the first time, copy them to the restored cache
-  for (const resolvedPath of Object.keys(stealthCache)) {
-    requireCache[resolvedPath] = stealthCache[resolvedPath];
-  }
+  clearCache(requireCache);
 
   Object.assign(requireCache, originalCache);
 
