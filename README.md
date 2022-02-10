@@ -263,3 +263,9 @@ As long as all untrusted input is cast to a string, `eleventy-hast-jsx` should b
 You could use a package from the excellent unified collective (such as [`hast-util-sanitize`](https://unifiedjs.com/explore/package/hast-util-sanitize/)) to process any user-supplied values before putting them in a component.
 
 One feature that has not yet been implemented is null/undefined checking. While it would be possible to check for and throw when attempting to render `null` or `undefined` — which is exactly what an earlier version of this plugin did — I found that it makes JSX conditionals (i.e. `{x && <div />}`) very annoying to write since you must do `{x ? <div //> : ""}` or similar. If I find a solution that allows conditionals to work properly while checking against directly-provided values (such as `{foo}`) being null, I hope to implement that as an optional feature.
+
+## Acknowledgements
+
+This package uses a version of the source code from the excellent [`stealthy-require` package](https://github.com/analog-nico/stealthy-require) by [Nicolai Kamenzky](https://github.com/analog-nico).
+
+`eleventy-hast-jsx` would not have been possible without the excellent work of the [Babel](https://babeljs.io/team), [Eleventy](https://www.11ty.dev/docs/credits/), and [Unified](https://unifiedjs.com/community/member/) teams. Send them money! :)
