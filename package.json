@@ -17,6 +17,7 @@
   ],
   "keywords": [
     "eleventy",
+    "eleventy-plugin",
     "unified",
     "hast",
     "jsx",
