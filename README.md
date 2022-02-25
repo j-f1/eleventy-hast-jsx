@@ -124,11 +124,11 @@ const { createElement, Comment } = require("eleventy-hast-jsx");
 <Comment>This is a comment</Comment>;
 ```
 
-### `component` Shortcode
+## `component` Shortcode
 
 If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component manually.) The shortcode produces a plain HTML string.
 
-#### Nunjucks (preferred)
+### Nunjucks (preferred)
 
 ```nunjucks
 {% component "Foo", name="name", age=42 %}
@@ -138,7 +138,7 @@ Of all the languages, the Nunjucks syntax lets us best represent the component. 
 
 The named parameters passed to the shortcode will be turned into props. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string.
 
-#### Liquid
+### Liquid
 
 ```liquid
 {% component "Foo", "name", 42 %}
@@ -184,7 +184,7 @@ The first parameter is the path to the component, relative to `componentsDir`. E
 
 Pass a props object as the second parameter. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string. The shortcode will always be async, regardless of whether or not the component is.
 
-## Template files
+## Template Files
 
 Template files must be CommonJS modules, with either one or two exports:
 
