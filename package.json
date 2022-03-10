@@ -33,8 +33,8 @@
     "url": "https://github.com/j-f1/eleventy-hast-jsx/issues"
   },
   "homepage": "https://github.com/j-f1/eleventy-hast-jsx#readme",
-  "peerDependencies": {
-    "@11ty/eleventy": "^1.0.0"
+  "11ty": {
+    "compatibility": "^1.0.0"
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.0",
