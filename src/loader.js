@@ -2,8 +2,7 @@
 
 const stealthyRequire = require("./cached-require");
 
-/** @type {any} */
-const { absolutePath } = require("@11ty/eleventy/src/TemplatePath");
+const { TemplatePath } = require("@11ty/eleventy-utils");
 
 /** @param {import('./types').PluginOptions['babelOptions']} options */
 module.exports = (options) => {
@@ -32,7 +31,7 @@ module.exports = (options) => {
 
   return {
     getInstance: (/** @type {string} */ inputPath) => {
-      const absPath = absolutePath(inputPath);
+      const absPath = TemplatePath.absolutePath(inputPath);
       if (cache.has(absPath)) return cache.get(absPath);
       cache.set(
         absPath,
