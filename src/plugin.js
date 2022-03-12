@@ -5,6 +5,15 @@ module.exports = (
   eleventyConfig,
   { babelOptions, htmlOptions, componentsDir } = {}
 ) => {
+  const pkg = require("../package.json");
+  try {
+    eleventyConfig.versionCheck(pkg["11ty"].compatibility);
+  } catch (/** @type {any} */ e) {
+    console.error(
+      e.message.replace("This project", "The " + pkg.name + " plugin")
+    );
+  }
+
   eleventyConfig.addTemplateFormats("jsx");
 
   const loader = require("./loader")(babelOptions);
