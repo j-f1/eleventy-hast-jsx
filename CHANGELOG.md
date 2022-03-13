@@ -1,3 +1,25 @@
+# v0.3.0
+
+Breaking changes:
+
+- The [`automatic` JSX runtime (“the new transform”)](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html) is now used by default.
+  - This means you no longer need to import `createElement` from `eleventy-hast-jsx` in your code to use JSX 🎉
+  - There should be no other code changes required, unless you are importing a different `createElement` function. If you’re doing that, you will now need to call your alternate function directly instead of using JSX.
+  - If the `automatic` transform doesn’t work for you, please [open an issue](https://github.com/j-f1/eleventy-hast-jsx/issues/new/choose).
+
+New features:
+
+- A new `jsxRuntime: "classic"` option has been added to allow you to switch back to the old behavior.
+  - This option is deprecated and will be removed in a future breaking change release. Please migrate to the new transform as soon as possible.
+- Eleventy v2.x is provisionally supported (although you will get a warning in your console for now)
+  - Expect a patch release in the near future to add official support once Eleventy v2.0.0 stable is released.
+  - As a side effect, this plugin now no longer directly imports anything from the `@11ty/eleventy` package!
+
+Other changes:
+
+- `@11ty/eleventy` is now no longer a peer dependency, as this is not the recommended approach for Eleventy plugins.
+  - Instead, it calls Eleventy's `versionCheck` function to confirm compatibility.
+
 # v0.2.2
 
 Bug fixes:

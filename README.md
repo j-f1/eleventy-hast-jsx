@@ -27,9 +27,6 @@ Next, create a new page or layout with the `.jsx` extension:
 ```js
 // hello-world.jsx
 
-// this is required to use JSX syntax
-const { createElement } = require("eleventy-hast-jsx");
-
 exports.default = (data) => <h1>Hello, world!</h1>;
 ```
 
@@ -43,6 +40,13 @@ An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/
   - By default, any `plugins` you pass will be run after the hardcoded JSX transform that this package does. Passing `overridePlugins: true` in `babelOptions` will replace the default plugin list with your custom plugins.
 - `htmlOptions`: Options passed to [`hast-util-to-html`](https://github.com/syntax-tree/hast-util-to-html#api) to convert your JSX code into an HTML string. By default, this is just `allowDangerousHtml: true` (to allow the `Raw` tag described below to work).
 - `componentsDir`: The directory the `component` shortcode (see docs below) should look for components in. Defaults to `_components`.
+- `jsxRuntime`: See the section below on JSX runtime options. This option is new in `v0.3.0`, and is also deprecated.
+
+### JSX runtimes
+
+The first version of this plugin shipped with the `classic` JSX runtime which required `createElement` to be imported into any file that used JSX. However, since v0.3.0, `eleventy-hast-jsx` by default uses the `automatic` JSX runtime, which automatically injects the necessary `require()` calls into your JSX files.
+
+This is technically a breaking change (since importing a different `createElement` function into your JSX files will no longer work), so if you want to revert to the previous version, you can do so by passing `jsxRuntime: "classic"` to the `plugin` function. I plan to remove this option in a future breaking change release, so please migrate to the new runtime as soon as possible. All you’ll need to do is remove the `const { createElement } = require("eleventy-hast-jsx")` line from your JSX files and test your website to make sure nothing is broken.
 
 ### `createElement`
 
@@ -50,18 +54,18 @@ This function has an identical signature to [`React.createElement`](https://reac
 
 The following kinds of tags are supported:
 
-- Passing a string as the tag name (such as by using a lowercase tag name in JSX like `<div />`) delegates to [`hastscript`](https://github.com/syntax-tree/hastscript)
+- Passing a string as the tag name (such as by using a lowercase tag name in JSX like `<div />`) delegates to [`hastscript`](https://github.com/syntax-tree/hastscript).
 - Passing a function as the tag name (such as by defining a function with a `PascalCase` name and using it like `<MyComponent />`) will call the function with the props object and return its result. Children are available as the `children` prop.
-- Passing the special value `createElement.Fragment` returns an array of the children passed. You can also use the JSX syntax `<>...</>` to create a fragment.
+- You can use the JSX syntax `<>...</>` to create a fragment.
+- [*classic runtime only*] Passing the special value `createElement.Fragment` returns an array of the children passed.
 
-You can use either HTML-style (e.g. `class`, `for`, ...) or DOM-style (`className`, `htmlFor`, ...) props on HTML elements. For custom components, props are passed as-is (except for the inclusion of the `children` array)
+You can use either HTML-style (e.g. `class`, `for`, ...) or DOM-style (`className`, `htmlFor`, ...) props on HTML elements. For custom components, props are passed as-is (except that `children` are processed as described below).
 
-Children are processed to behave more like React JSX. The `children` prop will _always_ be an array (even if 1 or 0 children were passed). Sub-arrays will be flattened recursively (up to depth 20, please file an issue or re-evaluate your life choices if you need more). String and number values will be converted to a `text` node. Like React’s version, `createElement` [skips booleans, null, and undefined children](https://reactjs.org/docs/jsx-in-depth.html#booleans-null-and-undefined-are-ignored). All other values are passed through as-is. This processing is applied to all children, including HTML elements, fragments, and custom components.
+Children are processed to behave more like React JSX. The `children` prop will _always_ be an array (even if 0 or 1 children were passed). Sub-arrays will be flattened recursively (up to depth 20, please file an issue or re-evaluate your life choices if you need more). String and number values will be converted to a `text` node. Like React’s version, `createElement` [skips booleans, null, and undefined children](https://reactjs.org/docs/jsx-in-depth.html#booleans-null-and-undefined-are-ignored). All other values are passed through as-is. This processing is applied to all children, including in HTML elements, fragments, and custom components.
 
 Unlike `React.createElement`, which simply constructs a tree of plain objects to be processed by React later on, this `createElement` function will call your custom component immediately and return whatever it returns. Since the `createElement` function does not process component return values in any way, you don’t have to return a valid hast node from the component — you could even return a Promise to make an async component:
 
 ```jsx
-const { createElement } = require("eleventy-hast-jsx");
 const fetch = require("node-fetch");
 
 async function FetchData(url) {
@@ -77,14 +81,16 @@ exports.default = async ({ dataSource }) => (
 );
 ```
 
-You _must_ manually import `createElement` to use JSX at this point, as support for the new JSX transform (which handles imports automatically) will have to wait until `@babel/register` and Eleventy fully support ES Modules.
+### `jsx`/`jsxs` (in `eleventy-hast-jsx/jsx-runtime`)
+
+These are similar to `createElement` above (and should provide an identical API from the JSX side), but they are used by the automatic JSX runtime.
 
 ### `Raw`
 
 The `Raw` component allows you to inject raw HTML strings into the output. This is useful for layouts (which are always provided template content as a string), or if `hast` does not allow you the flexibility you require for some horrifying abuse of HTML syntax. Unlike React, there is no globally available `dangerouslySetInnerHTML` prop. (see the safety and security section below).
 
 ```jsx
-const { createElement, Raw } = require("eleventy-hast-jsx");
+const { Raw } = require("eleventy-hast-jsx");
 
 <Raw html='<?php echo "Where did I go wrong?" ?>' />;
 <Raw html={templateContent} />;
@@ -98,10 +104,10 @@ Of course, you could also just make the `raw` node yourself:
 
 ### `DOCTYPE`
 
-The `DOCTYPE` component injects `<!DOCTYPE html>` into the output. This is useful for top-level layouts!
+The `DOCTYPE` component injects `<!DOCTYPE html>` into the output (via a [`doctype` node](https://github.com/syntax-tree/hast#doctype)). This is useful for top-level layouts!
 
 ```jsx
-const { createElement, Raw, DOCTYPE } = require("eleventy-hast-jsx");
+const { Raw, DOCTYPE } = require("eleventy-hast-jsx");
 module.exports = ({ templateContent }) => (
   <>
     <DOCTYPE />
@@ -116,17 +122,17 @@ module.exports = ({ templateContent }) => (
 
 ### `Comment`
 
-The `DOCTYPE` component produces an HTML comment (`<!-- like this -->`). Note that the leading and trailing spaces are not inserted by default (i.e. `<!--comment-->`) so you’ll need to include them in the child yourself if you want them.
+The `DOCTYPE` component produces an HTML comment (`<!-- like this -->`) (via a [`comment` node](https://github.com/syntax-tree/hast#comment)). Note that the leading and trailing spaces are not inserted by default (i.e. `<!--comment-->`) so you’ll need to include them in the child yourself if you want them.
 
 ```jsx
-const { createElement, Comment } = require("eleventy-hast-jsx");
+const { Comment } = require("eleventy-hast-jsx");
 
 <Comment>This is a comment</Comment>;
 ```
 
 ## `component` Shortcode
 
-If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component manually.) The shortcode produces a plain HTML string.
+If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component directly.) The shortcode produces a plain HTML string.
 
 ### Nunjucks (preferred)
 
@@ -193,16 +199,12 @@ Template files must be CommonJS modules, with either one or two exports:
 `exports.default` is required, and must be a function. It will be passed the merged data from the [data cascade](https://www.11ty.dev/docs/data-cascade/) as props, and should return a hast node (or an array of such nodes).
 
 ```jsx
-const { createElement } = require("eleventy-hast-jsx");
-
 exports.default = ({ name }) => <h1>Hello, {name}!</h1>;
 ```
 
 The exported function can also be `async` or return a `Promise`, which greatly expands what you can do…
 
 ```jsx
-const { createElement } = require("eleventy-hast-jsx");
-
 exports.default = async ({ title, someMarkdown }) => {
   const remark = (await import("unified"))
     .unified()
@@ -237,8 +239,6 @@ Code can be reused via Eleventy’s built-in layout mechanisms, or by creating c
 
 ```jsx
 // _components/Icon.jsx
-const { createElement } = require("eleventy-hast-jsx");
-
 function Icon({ name, size = 24 }) {
   return (
     <svg class="icon" width={size} height={size}>
@@ -250,7 +250,6 @@ function Icon({ name, size = 24 }) {
 module.exports = Icon;
 
 // some-page.jsx
-const { createElement } = require("eleventy-hast-jsx");
 const Icon = require("../_components/Icon");
 
 exports.default = () => <Icon name="star" />;
