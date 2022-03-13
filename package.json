@@ -3,10 +3,10 @@
   "version": "0.2.3",
   "description": "Custom Eleventy template language for JSX",
   "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "types": "types/src/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "tsc -p jsconfig.json; cp src/*.d.ts types/"
+    "prepare": "rm -r types; tsc -p jsconfig.json; cp src/*.d.ts types/src/"
   },
   "exports": {
     ".": "./src/index.js",
