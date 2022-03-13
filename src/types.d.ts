@@ -9,25 +9,25 @@ export interface createElement {
     ...children: Child[]
   ): HAST.Element;
 
-  <Props>(type: (props: Props) => HAST.Node, props: Props): HAST.Node;
-  <Props>(
-    type: (props: Props & { children: Child[] }) => HAST.Node,
+  <Props, Result>(type: (props: Props) => Result, props: Props): Result;
+  <Props, Result>(
+    type: (props: Props & { children: Child | Child[] }) => Result,
     props: Props,
-    ...children: HAST.Node[]
-  ): HAST.Node;
+    ...children: Child[]
+  ): Result;
 
-  (type: (props: {}) => HAST.Node, props: null): HAST.Node;
-  (
-    type: (props: { children: Child[] }) => HAST.Node,
+  <Result>(type: (props: {}) => Result, props: null): Result;
+  <Result>(
+    type: (props: { children: Child | Child[] }) => Result,
     props: null,
-    ...children: HAST.Node[]
-  ): HAST.Node;
+    ...children: Child[]
+  ): Result;
 
   (
     type: createElement["Fragment"],
     props: null,
     ...children: Child[]
-  ): HAST.Node;
+  ): HAST.Node[];
 
   Fragment: symbol;
 }
