@@ -3,7 +3,7 @@
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: import("./types").PluginOptions) => void} */
 module.exports = (
   eleventyConfig,
-  { babelOptions, htmlOptions, componentsDir } = {}
+  { babelOptions, htmlOptions, componentsDir, jsxRuntime } = {}
 ) => {
   const pkg = require("../package.json");
   try {
@@ -16,7 +16,7 @@ module.exports = (
 
   eleventyConfig.addTemplateFormats("jsx");
 
-  const loader = require("./loader")(babelOptions);
+  const loader = require("./loader")(babelOptions, jsxRuntime);
   eleventyConfig.on("eleventy.beforeWatch", () => loader.clearCache());
 
   const shortcodes = require("./shortcodes")(loader, {

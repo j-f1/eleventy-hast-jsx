@@ -9,7 +9,8 @@
     "prepare": "tsc -p jsconfig.json; cp src/*.d.ts types/"
   },
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./jsx-runtime": "./src/jsx-runtime.js"
   },
   "files": [
     "src/*",

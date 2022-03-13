@@ -1,6 +1,6 @@
 import * as HAST from "hast";
 
-type Child = HAST.Node | string | Array<HAST.Node | string>;
+export type Child = HAST.Node | string | Array<HAST.Node | string>;
 
 export interface createElement {
   (
@@ -32,12 +32,31 @@ export interface createElement {
   Fragment: symbol;
 }
 
+export interface jsx {
+  (
+    type: string,
+    properties: HAST.Properties & { children?: Child }
+  ): HAST.Element;
+
+  <Props, Result>(type: (props: Props) => Result, props: Props): Result;
+}
+
+export interface jsxs {
+  (
+    type: string,
+    properties: HAST.Properties & { children?: Child[] }
+  ): HAST.Element;
+
+  <Props, Result>(type: (props: Props) => Result, props: Props): Result;
+}
+
 export interface PluginOptions {
   babelOptions?: import("@babel/core").TransformOptions & {
     overridePlugins?: true;
   };
   htmlOptions?: import("hast-util-to-html").Options;
   componentsDir?: string;
+  jsxRuntime?: "automatic" | "classic";
 }
 
 // full spec at https://www.11ty.dev/docs/data-eleventy-supplied/

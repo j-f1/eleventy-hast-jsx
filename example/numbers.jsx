@@ -1,5 +1,3 @@
-const { createElement } = require("..");
-
 exports.data = {
   layout: "default.jsx",
 };
