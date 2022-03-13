@@ -1,23 +1,7 @@
 // @ts-check
 
 const h = require("hastscript");
-
-/**
- * @param {any[]} children
- * @returns {import("hast").Node[]}
- */
-const processChildren = (children) =>
-  children
-    .flat(20)
-    .flatMap((ch) =>
-      typeof ch === "string"
-        ? [{ type: "text", value: ch }]
-        : typeof ch === "number"
-        ? [{ type: "text", value: ch.toString() }]
-        : ch == null || typeof ch === "boolean"
-        ? []
-        : [ch]
-    );
+const processChildren = require("./process-children");
 
 /** @type {import('./types').createElement} */
 exports.createElement = Object.assign(
