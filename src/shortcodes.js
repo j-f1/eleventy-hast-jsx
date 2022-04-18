@@ -27,58 +27,70 @@ module.exports = (
     componentsDir = "_components",
     htmlOptions,
   }
-) => ({
+) => {
   /**
-   * @this {import('./types').ShortcodeThis}
+   * @param {import('./types').ShortcodeThis['ctx']['eleventy']} eleventyCtx
    * @param {string} name
-   * @param {any} props
    */
-  async nunjucksAndJS(name, props) {
-    const { render } = await import("./render.mjs");
-    const templatePath = path.join(
-      this.ctx.eleventy.env.root,
-      componentsDir,
-      name
-    );
+  const loadComponent = (eleventyCtx, name) => {
+    const templatePath = path.join(eleventyCtx.env.root, componentsDir, name);
 
     let component = loader.getInstance(templatePath);
-    if (component.default) component = component.default;
+    if (typeof component !== "function") {
+      const componentName = /** @type {string} */ (name.split("/").pop());
+      if (typeof component.default === "function") {
+        component = component.default;
+      } else if (typeof component[componentName] === "function") {
+        component = component[componentName];
+      } else {
+        throw new Error(
+          [
+            `Component '${componentName}' not found!`,
+            `- In the '${componentsDir}' directory, found component at '${templatePath}'.`,
+            `- 'module.exports' was not a function.`,
+            `- looked for keys '${componentName}' or 'default' on module.exports, but they were not present or not functions.`,
+            `- found these exports: ${Object.keys(component).join(", ")}`,
+          ].join("\n")
+        );
+      }
+    }
+    return component;
+  };
 
-    return render(await component(props), htmlOptions);
-  },
-  /**
-   * @this {import('./types').ShortcodeThis}
-   * @param {string} name
-   * @param {any[]} args
-   */
-  async liquid(name, ...args) {
-    const { render } = await import("./render.mjs");
-    const templatePath = path.join(
-      this.ctx.eleventy.env.root,
-      componentsDir,
-      name
-    );
+  return {
+    /**
+     * @this {import('./types').ShortcodeThis}
+     * @param {string} name
+     * @param {any} props
+     */
+    async nunjucksAndJS(name, props) {
+      const { render } = await import("./render.mjs");
+      const component = loadComponent(this.ctx.eleventy, name);
 
-    let component = loader.getInstance(templatePath);
-    if (component.default) component = component.default;
+      return render(await component(props), htmlOptions);
+    },
 
-    return render(await component(makeProps(args)), htmlOptions);
-  },
-  /**
-   * @this {import('./types').ShortcodeThis}
-   * @param {string} name
-   * @param {any[]} args
-   */
-  handlebars(name, ...args) {
-    const templatePath = path.join(
-      this.ctx.eleventy.env.root,
-      componentsDir,
-      name
-    );
+    /**
+     * @this {import('./types').ShortcodeThis}
+     * @param {string} name
+     * @param {any[]} args
+     */
+    async liquid(name, ...args) {
+      const { render } = await import("./render.mjs");
+      const component = loadComponent(this.ctx.eleventy, name);
 
-    let component = loader.getInstance(templatePath);
-    if (component.default) component = component.default;
+      return render(await component(makeProps(args)), htmlOptions);
+    },
 
-    return unsafeSyncRender(component(makeProps(args)), htmlOptions);
-  },
-});
+    /**
+     * @this {import('./types').ShortcodeThis}
+     * @param {string} name
+     * @param {any[]} args
+     */
+    handlebars(name, ...args) {
+      const component = loadComponent(this.ctx.eleventy, name);
+
+      return unsafeSyncRender(component(makeProps(args)), htmlOptions);
+    },
+  };
+};

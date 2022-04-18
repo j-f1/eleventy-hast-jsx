@@ -123,7 +123,7 @@ const { Comment } = require("eleventy-hast-jsx");
 
 If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component directly.) The shortcode produces a plain HTML string.
 
-For all template languages, the first parameter is the path to the component, relative to the `componentsDir` passed in the plugin options. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+For all template languages, the first parameter is the path to the component, relative to the `componentsDir` passed in the plugin options. Export your component from the component file by assigning it to `module.exports`, `module.exports.default`, or to a named export with the same name as the file (minus the extension).
 
 ### Nunjucks (preferred)
 
