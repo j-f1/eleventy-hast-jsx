@@ -12,7 +12,7 @@ First, add `eleventy-hast-jsx` as a dependency:
 $ npm install --save-dev eleventy-hast-jsx
 ```
 
-Next, add its plugin to your `.eleventy.js` file:
+Next, add it as a plugin to your `.eleventy.js` file:
 
 ```js
 module.exports = (eleventyConfig) => {
@@ -30,9 +30,9 @@ Next, create a new page or layout with the `.jsx` extension:
 exports.default = (data) => <h1>Hello, world!</h1>;
 ```
 
-## API
+## (Non-JSX) API
 
-### `plugin`
+### `require("eleventy-hast-jsx").plugin`
 
 An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/docs/plugins/#adding-a-plugin) for more information on adding a plugin. The plugin takes three optional options:
 
@@ -42,13 +42,7 @@ An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/
 - `componentsDir`: The directory the `component` shortcode (see docs below) should look for components in. Defaults to `_components`.
 - `jsxRuntime`: See the section below on JSX runtime options. This option is new in `v0.3.0`, and is also deprecated.
 
-### JSX runtimes
-
-The first version of this plugin shipped with the `classic` JSX runtime which required `createElement` to be imported into any file that used JSX. However, since v0.3.0, `eleventy-hast-jsx` by default uses the `automatic` JSX runtime, which automatically injects the necessary `require()` calls into your JSX files.
-
-This is technically a breaking change (since importing a different `createElement` function into your JSX files will no longer work), so if you want to revert to the previous version, you can do so by passing `jsxRuntime: "classic"` to the `plugin` function. I plan to remove this option in a future breaking change release, so please migrate to the new runtime as soon as possible. All you’ll need to do is remove the `const { createElement } = require("eleventy-hast-jsx")` line from your JSX files and test your website to make sure nothing is broken.
-
-### `createElement`
+## Using JSX
 
 This function has an identical signature to [`React.createElement`](https://reactjs.org/docs/react-api.html#createelement).
 
@@ -57,13 +51,12 @@ The following kinds of tags are supported:
 - Passing a string as the tag name (such as by using a lowercase tag name in JSX like `<div />`) delegates to [`hastscript`](https://github.com/syntax-tree/hastscript).
 - Passing a function as the tag name (such as by defining a function with a `PascalCase` name and using it like `<MyComponent />`) will call the function with the props object and return its result. Children are available as the `children` prop.
 - You can use the JSX syntax `<>...</>` to create a fragment.
-- [*classic runtime only*] Passing the special value `createElement.Fragment` returns an array of the children passed.
 
 You can use either HTML-style (e.g. `class`, `for`, ...) or DOM-style (`className`, `htmlFor`, ...) props on HTML elements. For custom components, props are passed as-is (except that `children` are processed as described below).
 
 Children are processed to behave more like React JSX. The `children` prop will _always_ be an array (even if 0 or 1 children were passed). Sub-arrays will be flattened recursively (up to depth 20, please file an issue or re-evaluate your life choices if you need more). String and number values will be converted to a `text` node. Like React’s version, `createElement` [skips booleans, null, and undefined children](https://reactjs.org/docs/jsx-in-depth.html#booleans-null-and-undefined-are-ignored). All other values are passed through as-is. This processing is applied to all children, including in HTML elements, fragments, and custom components.
 
-Unlike `React.createElement`, which simply constructs a tree of plain objects to be processed by React later on, this `createElement` function will call your custom component immediately and return whatever it returns. Since the `createElement` function does not process component return values in any way, you don’t have to return a valid hast node from the component — you could even return a Promise to make an async component:
+Unlike React JSX, which simply constructs a tree of plain objects to be processed by React later on, this package will call your custom component immediately and return whatever it returns. Since component return values are not processed in any way, you don’t have to return a valid hast node from the component — you could, for example, return a Promise to make an async component:
 
 ```jsx
 const fetch = require("node-fetch");
@@ -80,10 +73,6 @@ exports.default = async ({ dataSource }) => (
   </main>
 );
 ```
-
-### `jsx`/`jsxs` (in `eleventy-hast-jsx/jsx-runtime`)
-
-These are similar to `createElement` above (and should provide an identical API from the JSX side), but they are used by the automatic JSX runtime.
 
 ### `Raw`
 
@@ -134,15 +123,17 @@ const { Comment } = require("eleventy-hast-jsx");
 
 If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component directly.) The shortcode produces a plain HTML string.
 
+For all template languages, the first parameter is the path to the component, relative to the `componentsDir` passed in the plugin options. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+
 ### Nunjucks (preferred)
 
 ```nunjucks
 {% component "Foo", name="name", age=42 %}
 ```
 
-Of all the languages, the Nunjucks syntax lets us best represent the component. The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
+Of all the template languages supported by Eleventy, Nunjucks allows for the nicest developer experience, so I recommend using it if possible.
 
-The named parameters passed to the shortcode will be turned into props. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string.
+The named parameters passed to the shortcode will be turned into props. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string and returned.
 
 ### Liquid
 
@@ -150,15 +141,13 @@ The named parameters passed to the shortcode will be turned into props. You can 
 {% component "Foo", "name", 42 %}
 ```
 
-The first parameter is the path to the component, relative to `componentsDir`. Export your component from the component file by assigning it to either `module.exports` or `module.exports.default`.
-
 Liquid doesn’t support named parameters like Nunjucks, so the component will instead receive two props:
 
 - `arg` will be the first parameter you pass (`"name"` in the example above)
 - `args` will be an array containing all passed parameters (`["name", 42]` in the example above)
 - In addition, if you pass only one value, and that value is an object, all of its keys will be available as props. (for example, doing `{% component "Example" page %}` will have the various keys of `page` (`date`, `fileSlug`, …) available as props inside of `Example`.)
 
-You can make your component an `async` function, as its result will be awaited before being converted to an HTML string.
+You can make your component an `async` function, as its result will be awaited before being converted to an HTML string and returned.
 
 ### Handlebars
 
@@ -250,18 +239,20 @@ function Icon({ name, size = 24 }) {
 module.exports = Icon;
 
 // some-page.jsx
-const Icon = require("../_components/Icon");
+const Icon = require("./_components/Icon");
 
 exports.default = () => <Icon name="star" />;
 ```
 
 ## Safety and Security
 
-As long as all untrusted input is cast to a string, `eleventy-hast-jsx` should be safe. Strings will be escaped by `hast-util-to-html` (although, of course, `<Raw html={...} />` is exempt from this). However, `eleventy-hast-jsx` is intentionally designed to interpret _objects_ as HTML. This significantly increases the flexibility of components, since JSX expressions simply create hast nodes. However, if your untrusted user input could consist of arbitrary objects, you’ll need to ensure that it is serialized to a string before being passed into a JSX expression.
+`eleventy-hast-jsx` was designed to be generally used in trusted environments. Specifically, since it is intended to be used with Eleventy, I have assumed that all data passed in is trusted by the website creator. In particular, the HTML escaping performed by default is entirely for convenience (so you don’t have to write `&amp;`, for example) rather than an iron-clad security measure.
 
-You could use a package from the excellent unified collective (such as [`hast-util-sanitize`](https://unifiedjs.com/explore/package/hast-util-sanitize/)) to process any user-supplied values before putting them in a component.
+With that said, as long as all untrusted input is cast to a string, `eleventy-hast-jsx` should be safe. Strings will be escaped by `hast-util-to-html` (although, of course, `<Raw html={...} />` is exempt from this). However, `eleventy-hast-jsx` is intentionally designed to interpret _objects_ as HTML. This significantly increases the flexibility of components, since JSX expressions simply create hast nodes. However, if your untrusted user input could consist of arbitrary objects, you’ll need to ensure that it is either sanitized or coerced to a string before being passed into a JSX expression.
 
-One feature that has not yet been implemented is null/undefined checking. While it would be possible to check for and throw when attempting to render `null` or `undefined` — which is exactly what an earlier version of this plugin did — I found that it makes JSX conditionals (i.e. `{x && <div />}`) very annoying to write since you must do `{x ? <div //> : ""}` or similar. If I find a solution that allows conditionals to work properly while checking against directly-provided values (such as `{foo}`) being null, I hope to implement that as an optional feature.
+You could use a package from the excellent unified collective (such as [`hast-util-sanitize`](https://unifiedjs.com/explore/package/hast-util-sanitize/)) to process any user-supplied values before putting them in a component, if you want to allow custom HTML while retaining safety.
+
+One feature that has not yet been implemented is null/undefined checking. While it would be possible to check for and throw when attempting to render `null` or `undefined` — which is exactly what an earlier version of this plugin did — I found that it makes JSX conditionals (i.e. `{x && <div />}`) very annoying to write since you must do `{x ? <div /> : ""}` or similar. If I find a solution (probably a custom Babel plugin) that allows conditionals to work properly while checking against directly-provided values (such as `{foo}`) being null, I hope to implement that as an optional feature. And, of course, PRs are always welcome!
 
 ## Acknowledgements
 
