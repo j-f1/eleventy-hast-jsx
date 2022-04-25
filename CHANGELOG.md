@@ -1,3 +1,17 @@
+# v0.3.1
+
+New features:
+
+- You can now use components exported as named exports with the `{% component %}` shortcode.
+  - You’ll need to give the component export the same name as the file (minus the `.jsx` extension).
+- Fix the `<Comment />` component (thanks [@mattrossman] for [#3]!)
+- State that the minimum Node.js version is 16.x (thanks [@mattrossman] for [#2]!).
+  - This isn't a breaking change, because previous versions would error upon `require()` when running an older Node.js version.
+
+[@mattrossman]: https://github.com/mattrossman
+[#2]: https://github.com/j-f1/eleventy-hast-jsx/issues/2
+[#3]: https://github.com/j-f1/eleventy-hast-jsx/issues/3
+
 # v0.3.0
 
 Breaking changes:

@@ -4,7 +4,7 @@ This package adds a `.jsx` template engine to Eleventy that lets you use JSX to 
 
 ## Getting Started
 
-If you aren’t familiar with Eleventy, check out [their getting started guide](https://www.11ty.dev/docs/getting-started/) and come back here once you’ve got a site going.
+If you aren’t familiar with Eleventy, check out [their getting started guide](https://www.11ty.dev/docs/getting-started/) and come back here once you’ve got a site going. Make sure you use Node.js 16.0.0 or later.
 
 First, add `eleventy-hast-jsx` as a dependency:
 
