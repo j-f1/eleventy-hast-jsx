@@ -38,6 +38,9 @@
   "11ty": {
     "compatibility": "^1.0.0"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.0",
     "prettier": "2.6.2",
