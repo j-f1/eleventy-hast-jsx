@@ -44,13 +44,13 @@ An Eleventy plugin function. Check out [Eleventy’s docs](https://www.11ty.dev/
 
 ## Using JSX
 
-This function has an identical signature to [`React.createElement`](https://reactjs.org/docs/react-api.html#createelement).
+The following kinds of tags are supported (just like React’s JSX):
 
-The following kinds of tags are supported:
-
-- Passing a string as the tag name (such as by using a lowercase tag name in JSX like `<div />`) delegates to [`hastscript`](https://github.com/syntax-tree/hastscript).
-- Passing a function as the tag name (such as by defining a function with a `PascalCase` name and using it like `<MyComponent />`) will call the function with the props object and return its result. Children are available as the `children` prop.
-- You can use the JSX syntax `<>...</>` to create a fragment.
+- Lowercase tag names like `<div />` delegate to [`hastscript`](https://github.com/syntax-tree/hastscript). The JSX expression will evaluate to an [`Element`](https://github.com/syntax-tree/hast#element) object with the appropriate `tagName`.
+- Uppercase tag names like `<MyComponent />` depend on the type of the variable matching the tag name
+  - if `MyComponent` evaluates to a function, it will be called the props passed as a single object argument (just like React props), and any children are available as the `children` prop. The JSX expression will evaluate to the function’s return value (unlike React’s JSX). 
+  - if `MyComponent` evaluates to a string, the JSX expression will evaluate to an [`Element`](https://github.com/syntax-tree/hast#element) object with a `tagName` matching the value of `MyComponent` and any props passed will become properties/attributes of the element.
+- You can use the JSX syntax `<>...</>` to create a fragment. JSX fragment expressions evaluate to an array, following the `children` algorithm described below.
 
 You can use either HTML-style (e.g. `class`, `for`, ...) or DOM-style (`className`, `htmlFor`, ...) props on HTML elements. For custom components, props are passed as-is (except that `children` are processed as described below).
 
@@ -81,7 +81,7 @@ The `Raw` component allows you to inject raw HTML strings into the output. This 
 ```jsx
 const { Raw } = require("eleventy-hast-jsx");
 
-<Raw html='<?php echo "Where did I go wrong?" ?>' />;
+<Raw html='<?php echo "Where did I go wrong?"; ?>' />;
 <Raw html={templateContent} />;
 ```
 
