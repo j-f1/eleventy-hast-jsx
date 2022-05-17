@@ -135,6 +135,29 @@ Of all the template languages supported by Eleventy, Nunjucks allows for the nic
 
 The named parameters passed to the shortcode will be turned into props. You can make your component an `async` function, as its result will be awaited before being converted to an HTML string and returned.
 
+**Tip**: Do you want to pass children to your component? There’s currently no paired shortcode support, but you can create your own:
+
+```js
+eleventyConfig.addNunjucksPairedShortcode("card", function (content, props) {
+  return this.component("Card", {
+    ...props,
+    // This will make sure the content is not escaped
+    children: { type: "raw", value: content },
+  });
+});
+```
+
+Usage:
+
+```nunjucks
+{% card color="red" %}
+  <h1>My Card</h1>
+  <p>This is my card.</p>
+{% endcard %}
+```
+
+The code sample above only works in Nunjucks, but you can adapt it to any other supported template language.
+
 ### Liquid
 
 ```liquid
