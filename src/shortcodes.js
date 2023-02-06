@@ -23,8 +23,8 @@ const makeProps = (/** @type {any[]} */ args) => {
 
 module.exports = (
   /** @type {ReturnType<import('./loader')>} */ loader,
-  /** @type {import('./types').PluginOptions} */ {
-    componentsDir = "_components",
+  /** @type {import('./types').PluginOptions & { componentsDir: string }} */ {
+    componentsDir,
     htmlOptions,
   }
 ) => {

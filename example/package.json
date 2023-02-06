@@ -1,5 +1,9 @@
 {
   "private": true,
+  "scripts": {
+    "build": "rm -r _site; eleventy",
+    "start": "rm -r _site; eleventy --serve"
+  },
   "dependencies": {
     "@11ty/eleventy": "^2.0.0-beta.3",
     "eleventy-hast-jsx": "file:.."
