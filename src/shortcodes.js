@@ -70,7 +70,10 @@ module.exports = (
      */
     async nunjucksAndJS(name, props) {
       const { render } = await import("./render.mjs");
-      const component = loadComponent(this.eleventy || this.ctx.eleventy, name);
+      const component = loadComponent(
+        this.eleventy || (this.ctx && this.ctx.eleventy),
+        name
+      );
 
       return render(await component(props), htmlOptions);
     },
