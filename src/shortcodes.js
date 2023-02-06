@@ -29,7 +29,7 @@ module.exports = (
   }
 ) => {
   /**
-   * @param {import('./types').ShortcodeThis['ctx']['eleventy']} eleventyCtx
+   * @param {import('./types').ShortcodeThis['eleventy']} eleventy
    * @param {string} name
    */
   const loadComponent = (eleventyCtx, name) => {
@@ -65,7 +65,7 @@ module.exports = (
      */
     async nunjucksAndJS(name, props) {
       const { render } = await import("./render.mjs");
-      const component = loadComponent(this.ctx.eleventy, name);
+      const component = loadComponent(this.eleventy || this.ctx.eleventy, name);
 
       return render(await component(props), htmlOptions);
     },
@@ -77,7 +77,7 @@ module.exports = (
      */
     async liquid(name, ...args) {
       const { render } = await import("./render.mjs");
-      const component = loadComponent(this.ctx.eleventy, name);
+      const component = loadComponent(this.eleventy, name);
 
       return render(await component(makeProps(args)), htmlOptions);
     },
@@ -88,7 +88,7 @@ module.exports = (
      * @param {any[]} args
      */
     handlebars(name, ...args) {
-      const component = loadComponent(this.ctx.eleventy, name);
+      const component = loadComponent(this.eleventy, name);
 
       return unsafeSyncRender(component(makeProps(args)), htmlOptions);
     },

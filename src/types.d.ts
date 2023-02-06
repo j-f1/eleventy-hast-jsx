@@ -63,5 +63,4 @@ export interface PluginOptions {
 export interface ShortcodeThis {
   page: { inputPath: string };
   eleventy: { env: { root: string } };
-  ctx: { eleventy: { env: { root: string } } };
 }
