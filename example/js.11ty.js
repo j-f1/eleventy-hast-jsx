@@ -1,3 +1,3 @@
 module.exports = function () {
-  return this.component("Basic.jsx");
+  // return this.component("Basic");
 };
