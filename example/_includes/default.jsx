@@ -1,5 +1,5 @@
 const { DOCTYPE, Raw } = require("../..");
-const Heading = require("../components/Heading");
+const { default: Heading } = require("../_components/Heading");
 
 exports.default = ({ title = "Untitled", content }) => (
   <>
