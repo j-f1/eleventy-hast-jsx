@@ -48,7 +48,7 @@ The following kinds of tags are supported (just like React’s JSX):
 
 - Lowercase tag names like `<div />` delegate to [`hastscript`](https://github.com/syntax-tree/hastscript). The JSX expression will evaluate to an [`Element`](https://github.com/syntax-tree/hast#element) object with the appropriate `tagName`.
 - Uppercase tag names like `<MyComponent />` depend on the type of the variable matching the tag name
-  - if `MyComponent` evaluates to a function, it will be called the props passed as a single object argument (just like React props), and any children are available as the `children` prop. The JSX expression will evaluate to the function’s return value (unlike React’s JSX). 
+  - if `MyComponent` evaluates to a function, it will be called the props passed as a single object argument (just like React props), and any children are available as the `children` prop. The JSX expression will evaluate to the function’s return value (unlike React’s JSX).
   - if `MyComponent` evaluates to a string, the JSX expression will evaluate to an [`Element`](https://github.com/syntax-tree/hast#element) object with a `tagName` matching the value of `MyComponent` and any props passed will become properties/attributes of the element.
 - You can use the JSX syntax `<>...</>` to create a fragment. JSX fragment expressions evaluate to an array, following the `children` algorithm described below.
 
@@ -124,6 +124,10 @@ const { Comment } = require("eleventy-hast-jsx");
 If you want to integrate your components into one of the built-in template languages, use the `component` shortcode. (For the JSX language, import and use the component directly.) The shortcode produces a plain HTML string.
 
 For all template languages, the first parameter is the path to the component, relative to the `componentsDir` passed in the plugin options. Export your component from the component file by assigning it to `module.exports`, `module.exports.default`, or to a named export with the same name as the file (minus the extension).
+
+> **Note**
+> All of these template languages are supported with Eleventy v2.0.0 or later. If you’re using an older version, you’ll need to use Nunjucks due to limitations in the data we need to locate components.
+> 11ty.js support in Eleventy v2 is currently broken due to [11ty/eleventy#2790](https://github.com/11ty/eleventy/issues/2790) (JSX is fine though).
 
 ### Nunjucks (preferred)
 
