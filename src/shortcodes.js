@@ -32,8 +32,13 @@ module.exports = (
    * @param {import('./types').ShortcodeThis['eleventy']} eleventy
    * @param {string} name
    */
-  const loadComponent = (eleventyCtx, name) => {
-    const templatePath = path.join(eleventyCtx.env.root, componentsDir, name);
+  const loadComponent = (eleventy, name) => {
+    if (!eleventy) {
+      throw new Error(
+        "this template language is not supported on Eleventy 1.x"
+      );
+    }
+    const templatePath = path.join(eleventy.env.root, componentsDir, name);
 
     let component = loader.getInstance(templatePath);
     if (typeof component !== "function") {
