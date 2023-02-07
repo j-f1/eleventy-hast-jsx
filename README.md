@@ -125,10 +125,6 @@ If you want to integrate your components into one of the built-in template langu
 
 For all template languages, the first parameter is the path to the component, relative to the `componentsDir` passed in the plugin options. Export your component from the component file by assigning it to `module.exports`, `module.exports.default`, or to a named export with the same name as the file (minus the extension).
 
-> **Note**
-> All of these template languages are supported with Eleventy v2.0.0 or later. If you’re using an older version, you’ll need to use Nunjucks due to limitations in the data we need to locate components.
-> 11ty.js support in Eleventy v2 is currently broken due to [11ty/eleventy#2790](https://github.com/11ty/eleventy/issues/2790) (JSX is fine though).
-
 ### Nunjucks (preferred)
 
 ```nunjucks

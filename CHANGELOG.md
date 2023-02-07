@@ -1,8 +1,15 @@
+# v0.3.3
+
+Bug fixes:
+
+- Adds support for languages other than Nunjucks on Eleventy v1.x
+- Adds support for 11ty.js on Eleventy v2.x
+
 # v0.3.2
 
 Bug fixes:
 
-- Improves compatibility with Eleventy v2. (You’ll still get the compatibility warning, look for another update when the official v2 release is out!)
+- Improved compatibility with Eleventy v2. (You’ll still get the compatibility warning, look for another update when the official v2 release is out!)
 - Improve error messages when a template language does not provide enough information to find a component.
 
 # v0.3.1
