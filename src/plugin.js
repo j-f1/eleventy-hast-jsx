@@ -10,7 +10,14 @@ module.exports = (
     eleventyConfig.versionCheck(pkg["11ty"].compatibility);
   } catch (/** @type {any} */ e) {
     console.error(
-      e.message.replace("This project", "The " + pkg.name + " plugin")
+      e.message
+        // 1.x
+        .replace("This project", "The " + pkg.name + " plugin")
+        // 2.x
+        .replace(
+          "We found Eleventy version",
+          pkg.name + " found Eleventy version"
+        )
     );
   }
 
