@@ -32,13 +32,17 @@ module.exports = (
    * @param {import('./types').ShortcodeThis['eleventy']} eleventy
    * @param {string} name
    */
-  const loadComponent = (eleventy, name) => {
-    if (!eleventy) {
+  const loadComponent = (name) => {
+    if (!process.env.ELEVENTY_ROOT) {
       throw new Error(
-        "this template language is not supported on Eleventy 1.x"
+        "process.env.ELEVENTY_ROOT is not set. This is a bug in eleventy."
       );
     }
-    const templatePath = path.join(eleventy.env.root, componentsDir, name);
+    const templatePath = path.join(
+      process.env.ELEVENTY_ROOT,
+      componentsDir,
+      name
+    );
 
     let component = loader.getInstance(templatePath);
     if (typeof component !== "function") {
@@ -70,10 +74,7 @@ module.exports = (
      */
     async nunjucksAndJS(name, props) {
       const { render } = await import("./render.mjs");
-      const component = loadComponent(
-        this.eleventy || (this.ctx && this.ctx.eleventy),
-        name
-      );
+      const component = loadComponent(name);
 
       return render(await component(props), htmlOptions);
     },
@@ -85,7 +86,7 @@ module.exports = (
      */
     async liquid(name, ...args) {
       const { render } = await import("./render.mjs");
-      const component = loadComponent(this.eleventy, name);
+      const component = loadComponent(name);
 
       return render(await component(makeProps(args)), htmlOptions);
     },
@@ -96,7 +97,7 @@ module.exports = (
      * @param {any[]} args
      */
     handlebars(name, ...args) {
-      const component = loadComponent(this.eleventy, name);
+      const component = loadComponent(name);
 
       return unsafeSyncRender(component(makeProps(args)), htmlOptions);
     },
