@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/j-f1/eleventy-hast-jsx#readme",
   "11ty": {
-    "compatibility": "^1.0.0"
+    "compatibility": "^1.0.0 || ^2.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
