@@ -23,6 +23,7 @@ module.exports = (
 
   eleventyConfig.addTemplateFormats("jsx");
 
+  // @ts-expect-error This is actually always set to a valid value
   eleventyConfig.ignores.add(componentsDir);
 
   const loader = require("./loader")(babelOptions, jsxRuntime);

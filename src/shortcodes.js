@@ -29,7 +29,6 @@ module.exports = (
   }
 ) => {
   /**
-   * @param {import('./types').ShortcodeThis['eleventy']} eleventy
    * @param {string} name
    */
   const loadComponent = (name) => {
