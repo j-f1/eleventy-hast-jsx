@@ -58,3 +58,5 @@ export interface PluginOptions {
   componentsDir?: string;
   jsxRuntime?: "automatic" | "classic";
 }
+
+export type RenderComponent = (name: string, props: any) => Promise<string>;

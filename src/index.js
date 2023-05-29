@@ -1,8 +1,9 @@
 // @ts-check
 
+/** @typedef {import('./types').RenderComponent} RenderComponent */
+
 module.exports = {
-  get plugin() {
-    return require("./plugin");
-  },
+  plugin: require("./plugin").default,
+  renderComponent: require("./plugin").renderComponent,
   ...require("./jsx"),
 };

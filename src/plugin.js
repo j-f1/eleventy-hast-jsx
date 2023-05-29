@@ -1,7 +1,9 @@
 // @ts-check
 
+exports.renderComponent = Symbol("renderComponent");
+
 /** @type {(eleventyConfig: import("@11ty/eleventy/src/UserConfig"), opts: import("./types").PluginOptions) => void} */
-module.exports = (
+exports.default = (
   eleventyConfig,
   { babelOptions, htmlOptions, componentsDir = "_components", jsxRuntime } = {}
 ) => {
@@ -40,6 +42,9 @@ module.exports = (
   eleventyConfig.addJavaScriptFunction("component", shortcodes.nunjucksAndJS);
   eleventyConfig.addLiquidShortcode("component", shortcodes.liquid);
   eleventyConfig.addHandlebarsHelper("component", shortcodes.handlebars);
+
+  // @ts-expect-error Hacky!
+  eleventyConfig[exports.renderComponent] = shortcodes.nunjucksAndJS;
 
   /** @type {import('./render.mjs').createRenderer} */
   let createRenderer;
