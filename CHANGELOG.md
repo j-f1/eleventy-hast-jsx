@@ -1,3 +1,7 @@
+# v0.3.5
+
+- Mark 11ty v2.x as officially supported (sorry for the delay!)
+
 # v0.3.4
 
 Maintenance:
