@@ -1,3 +1,10 @@
+# v0.3.4
+
+Maintenance:
+
+- Improve quality of internal typings
+- Eliminate getter for `require("eleventy-hast-jsx").plugin` since it no longer does its own immediate imports
+
 # v0.3.3
 
 Bug fixes:
