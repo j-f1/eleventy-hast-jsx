@@ -58,9 +58,3 @@ export interface PluginOptions {
   componentsDir?: string;
   jsxRuntime?: "automatic" | "classic";
 }
-
-// full spec at https://www.11ty.dev/docs/data-eleventy-supplied/
-export interface ShortcodeThis {
-  page: { inputPath: string };
-  eleventy: { env: { root: string } };
-}

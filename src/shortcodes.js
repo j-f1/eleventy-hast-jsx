@@ -67,7 +67,6 @@ module.exports = (
 
   return {
     /**
-     * @this {import('./types').ShortcodeThis}
      * @param {string} name
      * @param {any} props
      */
@@ -79,7 +78,6 @@ module.exports = (
     },
 
     /**
-     * @this {import('./types').ShortcodeThis}
      * @param {string} name
      * @param {any[]} args
      */
@@ -91,7 +89,6 @@ module.exports = (
     },
 
     /**
-     * @this {import('./types').ShortcodeThis}
      * @param {string} name
      * @param {any[]} args
      */
